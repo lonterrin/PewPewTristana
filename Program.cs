@@ -71,7 +71,7 @@ namespace PewPewTristana
             Dfg = new Items.Item((int)ItemId.Deathfire_Grasp, 750);
 
             //Main Menu & Sub Menus
-            Config = new Menu("Tristana Droppin' Rockets", "Tristark", true);
+            Config = new Menu("PewPewTristana", "Tristark", true);
 
             //Orbwalker
             Orbwalker = new Orbwalking.Orbwalker(Config.AddSubMenu(new Menu("Orbwalker", "Orbwalker")));
@@ -82,7 +82,7 @@ namespace PewPewTristana
             animePussy.AddItem(new MenuItem("UseQ", "Use Q - Rapid Fire").SetValue(true));
             animePussy.AddItem(new MenuItem("UseW", "Use W  Logic - Rocket Jump").SetValue(true));
             //Wlogic
-            animePussy.AddItem(new MenuItem("WL", "Enemies near Target").SetValue(new Slider(1, 4, 1)));
+            animePussy.AddItem(new MenuItem("WL", "Enemies near Target").SetValue(new Slider(1, 5, 0)));
 
             animePussy.AddItem(new MenuItem("UseE", "Use E - Explosive Shot").SetValue(true));
             animePussy.AddItem(new MenuItem("UseR", "Use R Logic - Bustershot").SetValue(false));
@@ -100,7 +100,7 @@ namespace PewPewTristana
             Config.SubMenu("Drawing").AddItem(new MenuItem("Wdraw", "Draw W - Rocket Jump").SetValue(true));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Edraw", "Draw E - Explosive Shot").SetValue(true));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Rdraw", "Draw R - Bustershot").SetValue(true));
-            Config.AddItem(new MenuItem("ARK SERIES", "ARK SERIES! - Tristana Droppin' Rockets"));
+            Config.AddItem(new MenuItem("ARK SERIES", "Credits: ScienceARK, Salice, Lexxes, FluxySenpai"));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Rrdy", "Draw R Bustershot Status").SetValue(true));
             //Damage Indc
             Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawD", "<<Draw Damage>>").SetValue(true));
@@ -224,7 +224,12 @@ namespace PewPewTristana
                 var Ignite = ObjectManager.Player.GetSpellSlot("summonerdot");
                 var dmg1 = player.GetComboDamage(ort, new[] { SpellSlot.E, SpellSlot.R });
                 var dmg2 = player.GetComboDamage(ort, new[] { SpellSlot.E, IgniteSlot });
+                var dmg3 = player.GetComboDamage(ort, new[] { SpellSlot.E, SpellSlot.R, SpellSlot.W, IgniteSlot });
 
+                if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) && ort.IsValidTarget(W.Range) &&
+                wt.Position.CountEnemiesInRange(500) < Config.Item("WL").GetValue<Slider>().Value && (CalcDamage(ort) > ort.Health))
+
+                    W.Cast(ort.Position);
 
 
                 if (E.IsReady() && Config.Item("UseE").GetValue<bool>() && et.IsValidTarget(E.Range))
@@ -240,11 +245,7 @@ namespace PewPewTristana
                         R.CastOnUnit(rt);
                 }
                 {
-                    //Wlogic simple
-                    if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) && ort.IsValidTarget(W.Range) &&
-                        ort.Position.CountEnemiesInRange(700) < Config.Item("WL").GetValue<Slider>().Value && (CalcDamage(ort) > ort.Health))
-
-                        W.Cast(ort.Position);
+                    
 
                     //Second Combo Mode WIP
                     //Adding W kill soon
@@ -257,7 +258,7 @@ namespace PewPewTristana
                 }
                 {
                     if (IgniteSlot.IsReady() && Config.Item("UseIgnite").GetValue<bool>() &&
-                        (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo && (dmg2) > ort.Health))
+                        (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo && (dmg3) > ort.Health))
 
                         ObjectManager.Player.Spellbook.CastSpell(Ignite, ort);
                 }
