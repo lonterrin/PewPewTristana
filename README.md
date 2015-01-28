@@ -1,7 +1,9 @@
 # PewPewTristana
-Tristana Script (Hybrid/AD)
+Tristana Script
 
 Basic Usage of Q & E.
+
+Harass Mode
 
 Logic for W & R usage.
 (Will use W when you can kill your target, safety slider for when to use W)
@@ -16,8 +18,9 @@ Cooldown Indicator for R.
 
 Spell Range Drawing
 
+ItemUsage (BotrK & Gunblade)
 
-WIP: Harass, Killsteal & ItemUsage.
 
+Soontm: Laneclear logic, Killsteal option
 
 By ScienceARK
