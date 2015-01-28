@@ -190,9 +190,9 @@ namespace PewPewTristana
                     return;
                 SpellRangeTick = Environment.TickCount;
 
-                Q.Range = 600 + (5 * (ObjectManager.Player.Level - 1));
-                E.Range = 550 + (9 * (ObjectManager.Player.Level - 1));
-                R.Range = 550 + (9 * (ObjectManager.Player.Level - 1));
+                Q.Range = 600 + (4 * (ObjectManager.Player.Level - 1));
+                E.Range = 550 + (7 * (ObjectManager.Player.Level - 1));
+                R.Range = 550 + (7 * (ObjectManager.Player.Level - 1));
             }
         }
 
@@ -213,6 +213,18 @@ namespace PewPewTristana
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed)
+            {
+                //HARASS
+                var t = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
+                if (E.IsReady() && Config.Item("hE").GetValue<bool>() && t.IsValidTarget(E.Range))
+                    E.CastOnUnit(t);
+                {
+                    if (Q.IsReady() && Config.Item("hQ").GetValue<bool>() && t.IsValidTarget(Q.Range))
+                        Q.CastOnUnit(ObjectManager.Player);
+                }
+
+            }
 
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
             {
@@ -238,6 +250,7 @@ namespace PewPewTristana
                     if (Q.IsReady() && Config.Item("UseQ").GetValue<bool>() && qt.IsValidTarget(Q.Range))
                         Q.CastOnUnit(ObjectManager.Player);
                 }
+
                 {
                     if (R.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
                         Config.Item("UseR").GetValue<bool>() && (R.GetDamage(rt) > rt.Health - 50))
