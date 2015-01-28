@@ -78,14 +78,19 @@ namespace PewPewTristana
             TargetSelector.AddToMenu(Config.AddSubMenu(new Menu("Target Selector", "Target Selector")));
 
             //Combo Options Menu
-            var animePussy = Config.AddSubMenu(new Menu("Combo Mode", "Combo Mode"));
+            var animePussy = Config.AddSubMenu(new Menu("Combo Mode", "Combo Settings"));
             animePussy.AddItem(new MenuItem("UseQ", "Use Q - Rapid Fire").SetValue(true));
+            animePussy.AddItem(new MenuItem("UseE", "Use E - Explosive Charge").SetValue(true));
+            animePussy.AddItem(new MenuItem("UseR", "Use R Logic - Bustershot").SetValue(false));
+            animePussy.AddItem(new MenuItem("Blank", "                                         "));
             animePussy.AddItem(new MenuItem("UseW", "Use W  Logic - Rocket Jump").SetValue(true));
             //Wlogic
             animePussy.AddItem(new MenuItem("WL", "Enemies near Target").SetValue(new Slider(1, 5, 0)));
 
-            animePussy.AddItem(new MenuItem("UseE", "Use E - Explosive Shot").SetValue(true));
-            animePussy.AddItem(new MenuItem("UseR", "Use R Logic - Bustershot").SetValue(false));
+
+
+            Config.SubMenu("Harass").AddItem(new MenuItem("hQ", "Use Q - Rapid Fire").SetValue(true));
+            Config.SubMenu("Harass").AddItem(new MenuItem("hE", "Use E - Explosive Charge").SetValue(true));
 
             //Misc Options Menu
             Config.SubMenu("Misc").AddItem(new MenuItem("AntiGap", "Anti Gapcloser - R").SetValue(true));
@@ -149,11 +154,14 @@ namespace PewPewTristana
         player.Spellbook.CanUseSpell(IgniteSlot) == SpellState.Ready)
                 damage += ObjectManager.Player.GetSummonerSpellDamage(target, Damage.SummonerSpell.Ignite);
 
+            if (Items.HasItem(3146) && Items.CanUseItem(3146))
+                damage += player.GetItemDamage(target, Damage.DamageItems.Hexgun); //ITEM BOTRK
+
             if (Items.HasItem(3153) && Items.CanUseItem(3153))
                 damage += player.GetItemDamage(target, Damage.DamageItems.Botrk); //ITEM BOTRK
 
-            if (Items.HasItem(3153) && Items.CanUseItem(3153))
-                damage += player.GetItemDamage(target, Damage.DamageItems.Hexgun); //ITEM BOTRK
+            if (Items.HasItem(3144) && Items.CanUseItem(3144))
+                damage += player.GetItemDamage(target, Damage.DamageItems.Bilgewater); //ITEM BOTRK
 
             if (Config.Item("UseE").GetValue<bool>()) // edamage
             {
@@ -239,7 +247,7 @@ namespace PewPewTristana
                 var dmg3 = player.GetComboDamage(ort, new[] { SpellSlot.E, SpellSlot.R, SpellSlot.W, IgniteSlot });
 
                 if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) && ort.IsValidTarget(W.Range) &&
-                wt.Position.CountEnemiesInRange(500) < Config.Item("WL").GetValue<Slider>().Value && (CalcDamage(ort) > ort.Health))
+                wt.Position.CountEnemiesInRange(500) < Config.Item("WL").GetValue<Slider>().Value && (CalcDamage(ort) + 150 > ort.Health))
 
                     W.Cast(ort.Position);
 
@@ -277,7 +285,7 @@ namespace PewPewTristana
                 }
             }
         }
-
+        
 
         private static void OnDraw(EventArgs args)
         {
