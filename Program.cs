@@ -2,6 +2,8 @@
 using System.Linq;
 using LeagueSharp.Common;
 using LeagueSharp;
+using LeagueSharp.Common.Data;
+using SharpDX.Direct3D;
 using Color = System.Drawing.Color;
 
 namespace PewPewTristana
@@ -252,9 +254,31 @@ namespace PewPewTristana
                 var dmg1 = player.GetComboDamage(ort, new[] { SpellSlot.E, SpellSlot.R });
                 var dmg2 = player.GetComboDamage(ort, new[] { SpellSlot.E, IgniteSlot });
                 var dmg3 = player.GetComboDamage(ort, new[] { SpellSlot.E, SpellSlot.R, SpellSlot.W, IgniteSlot });
+                var botrk = ItemData.Blade_of_the_Ruined_King.GetItem();
+                var hex = ItemData.Hextech_Gunblade.GetItem();
+                var cutlass = ItemData.Bilgewater_Cutlass.GetItem();
 
+                //BOTRK
+                if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort) && ort.HealthPercentage() < Config.Item("eL").GetValue<Slider>().Value
+                    && player.HealthPercentage() <  Config.Item("oL").GetValue<Slider>().Value && Config.Item("UseBOTRK").GetValue<bool>())
+                
+                    botrk.Cast(ort);
+
+                //HEXTECHGUNBLADE
+                if (hex.IsReady() && hex.IsOwned(player) && hex.IsInRange(ort) && ort.HealthPercentage() < Config.Item("HL").GetValue<Slider>().Value
+                && Config.Item("UseHEX").GetValue<bool>())
+
+                    hex.Cast(ort);
+
+                //BILGEWATER SWORD THINGY
+                if (cutlass.IsReady() && cutlass.IsOwned(player) && cutlass.IsInRange(ort) && ort.HealthPercentage() < Config.Item("HL").GetValue<Slider>().Value
+                && Config.Item("UseHEX").GetValue<bool>())
+
+                    cutlass.Cast(ort);
+
+                //WLOGIC I GUESS
                 if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) && ort.IsValidTarget(W.Range) &&
-                wt.Position.CountEnemiesInRange(700) < Config.Item("WL").GetValue<Slider>().Value && (CalcDamage(ort) + 150 > ort.Health))
+                wt.Position.CountEnemiesInRange(700) < Config.Item("WL").GetValue<Slider>().Value && Config.Item("UseW").GetValue<bool>() && (CalcDamage(ort) + 150 > ort.Health))
 
                     W.Cast(ort.Position);
 
@@ -273,7 +297,7 @@ namespace PewPewTristana
                         R.CastOnUnit(rt);
                 }
                 {
-                    
+                   
 
                     //Second Combo Mode WIP
                     //Adding W kill soon

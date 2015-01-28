@@ -1,0 +1,12 @@
+c:\users\haf911\documents\visual studio 2013\Projects\PewPewTristana\PewPewTristana\bin\Release\PewPewTristana.exe.config
+c:\users\haf911\documents\visual studio 2013\Projects\PewPewTristana\PewPewTristana\bin\Release\PewPewTristana.exe
+c:\users\haf911\documents\visual studio 2013\Projects\PewPewTristana\PewPewTristana\bin\Release\PewPewTristana.pdb
+c:\users\haf911\documents\visual studio 2013\Projects\PewPewTristana\PewPewTristana\bin\Release\LeagueSharp.Common.dll
+c:\users\haf911\documents\visual studio 2013\Projects\PewPewTristana\PewPewTristana\bin\Release\LeagueSharp.dll
+c:\users\haf911\documents\visual studio 2013\Projects\PewPewTristana\PewPewTristana\bin\Release\SharpDX.Direct3D9.dll
+c:\users\haf911\documents\visual studio 2013\Projects\PewPewTristana\PewPewTristana\bin\Release\SharpDX.dll
+c:\users\haf911\documents\visual studio 2013\Projects\PewPewTristana\PewPewTristana\bin\Release\clipper_library.dll
+c:\users\haf911\documents\visual studio 2013\Projects\PewPewTristana\PewPewTristana\bin\Release\LeagueSharp.xml
+c:\users\haf911\documents\visual studio 2013\Projects\PewPewTristana\PewPewTristana\obj\Debug\PewPewTristana.csprojResolveAssemblyReference.cache
+c:\users\haf911\documents\visual studio 2013\Projects\PewPewTristana\PewPewTristana\obj\Debug\PewPewTristana.exe
+c:\users\haf911\documents\visual studio 2013\Projects\PewPewTristana\PewPewTristana\obj\Debug\PewPewTristana.pdb
