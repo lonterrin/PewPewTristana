@@ -22,8 +22,7 @@ namespace PewPewTristana
         public static int SpellRangeTick;
         public static Menu Config;
         public static Orbwalking.Orbwalker Orbwalker;
-        private static Obj_AI_Hero Player;
-        private static float _time = 10;
+
 
         private static float _eTime;
 
@@ -106,7 +105,10 @@ namespace PewPewTristana
             Config.SubMenu("Drawing").AddItem(new MenuItem("Edraw", "Draw E - Explosive Charge").SetValue(true));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Rdraw", "Draw R - Bustershot").SetValue(true));
             Config.AddItem(new MenuItem("ARK SERIES", "Credits: ScienceARK, Salice, Lexxes, FluxySenpai"));
+
+            Config.SubMenu("Drawing").AddItem(new MenuItem("Blank", "                                         "));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Rrdy", "Draw R Bustershot Status").SetValue(true));
+            Config.SubMenu("Drawing").AddItem(new MenuItem("Killa", "Draw if Target is Killable").SetValue(true));
             //Damage Indc
             Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawD", "<<Draw Damage>>").SetValue(true));
             Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawW", "Draw Rocket Jump Damage(W)").SetValue(false));
@@ -199,8 +201,8 @@ namespace PewPewTristana
                 SpellRangeTick = Environment.TickCount;
 
                 Q.Range = 600 + (4 * (ObjectManager.Player.Level - 1));
-                E.Range = 550 + (7 * (ObjectManager.Player.Level - 1));
-                R.Range = 550 + (7 * (ObjectManager.Player.Level - 1));
+                E.Range = 545 + (7 * (ObjectManager.Player.Level - 1));
+                R.Range = 545 + (7 * (ObjectManager.Player.Level - 1));
             }
         }
 
@@ -247,7 +249,7 @@ namespace PewPewTristana
                 var dmg3 = player.GetComboDamage(ort, new[] { SpellSlot.E, SpellSlot.R, SpellSlot.W, IgniteSlot });
 
                 if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) && ort.IsValidTarget(W.Range) &&
-                wt.Position.CountEnemiesInRange(700) < Config.Item("WL").GetValue<Slider>().Value && (CalcDamage(ort) + 150 > ort.Health))
+                wt.Position.CountEnemiesInRange(700) < Config.Item("WL").GetValue<Slider>().Value && (CalcDamage(ort) + 150 > ort.Health) && ort.i)
 
                     W.Cast(ort.Position);
 
@@ -295,7 +297,13 @@ namespace PewPewTristana
             {
                 Drawing.DrawText(pos.X, pos.Y, Color.Gold, "R is Ready!");
             }
-
+            //Killable Drawing
+            var ort = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
+            var epos = Drawing.WorldToScreen(ort.Position);
+            if (CalcDamage(ort) + 150 > ort.Health && Config.Item("Killa").GetValue<bool>())
+            {
+                Drawing.DrawText(pos.X, pos.Y, Color.Red, "Target is Killable!");
+            }
             //Drawings
 
             if (Config.Item("Draw_Disabled").GetValue<bool>())
