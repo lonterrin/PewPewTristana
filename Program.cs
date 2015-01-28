@@ -85,7 +85,7 @@ namespace PewPewTristana
             animePussy.AddItem(new MenuItem("Blank", "                                         "));
             animePussy.AddItem(new MenuItem("UseW", "Use W  Logic - Rocket Jump").SetValue(true));
             //Wlogic
-            animePussy.AddItem(new MenuItem("WL", "Enemies near Target").SetValue(new Slider(1, 5, 0)));
+            animePussy.AddItem(new MenuItem("WL", "Amount of Enemies").SetValue(new Slider(2, 5, 2)));
 
 
 
@@ -103,7 +103,7 @@ namespace PewPewTristana
             //Spell Ranges
             Config.SubMenu("Drawing").AddItem(new MenuItem("Draw_Disabled", "Disable All Spell Drawings").SetValue(false));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Wdraw", "Draw W - Rocket Jump").SetValue(true));
-            Config.SubMenu("Drawing").AddItem(new MenuItem("Edraw", "Draw E - Explosive Shot").SetValue(true));
+            Config.SubMenu("Drawing").AddItem(new MenuItem("Edraw", "Draw E - Explosive Charge").SetValue(true));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Rdraw", "Draw R - Bustershot").SetValue(true));
             Config.AddItem(new MenuItem("ARK SERIES", "Credits: ScienceARK, Salice, Lexxes, FluxySenpai"));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Rrdy", "Draw R Bustershot Status").SetValue(true));
@@ -247,7 +247,7 @@ namespace PewPewTristana
                 var dmg3 = player.GetComboDamage(ort, new[] { SpellSlot.E, SpellSlot.R, SpellSlot.W, IgniteSlot });
 
                 if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) && ort.IsValidTarget(W.Range) &&
-                wt.Position.CountEnemiesInRange(500) < Config.Item("WL").GetValue<Slider>().Value && (CalcDamage(ort) + 150 > ort.Health))
+                wt.Position.CountEnemiesInRange(700) < Config.Item("WL").GetValue<Slider>().Value && (CalcDamage(ort) + 150 > ort.Health))
 
                     W.Cast(ort.Position);
 
@@ -272,7 +272,7 @@ namespace PewPewTristana
                     //Adding W kill soon
 
                     if (R.IsReady() && Config.Item("UseR").GetValue<bool>() &&
-                        (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo && (dmg1) > ort.Health))
+                        (Orbwalker.ActiveMode <= Orbwalking.OrbwalkingMode.Combo && (dmg1) > ort.Health))
 
                         R.CastOnUnit(ort);
 
