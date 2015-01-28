@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Dynamic;
 using System.Linq;
 using LeagueSharp.Common;
 using LeagueSharp;
@@ -82,17 +83,20 @@ namespace PewPewTristana
             var animePussy = Config.AddSubMenu(new Menu("Combo Mode", "Combo Settings"));
             animePussy.AddItem(new MenuItem("UseQ", "Use Q - Rapid Fire").SetValue(true));
             animePussy.AddItem(new MenuItem("UseE", "Use E - Explosive Charge").SetValue(true));
-            animePussy.AddItem(new MenuItem("UseR", "Use R Logic - Bustershot").SetValue(false));
+            animePussy.AddItem(new MenuItem("UseR", "Use R Logic - Bustershot").SetValue(true));
             animePussy.AddItem(new MenuItem("Blank", "                                         "));
             animePussy.AddItem(new MenuItem("UseW", "Use W  Logic - Rocket Jump").SetValue(true));
+            animePussy.AddItem(new MenuItem("WzL", "  Own HP Percentage").SetValue(new Slider(65, 100, 0)));
             //Wlogic
             animePussy.AddItem(new MenuItem("WL", "  Amount of Enemies").SetValue(new Slider(1, 5, 1)));
             animePussy.AddItem(new MenuItem("eBlank", "                                         "));
             animePussy.AddItem(new MenuItem("UseBOTRK", "Use Blade of the Ruined King").SetValue(true));
-            animePussy.AddItem(new MenuItem("eL", "  Enemy HP Percentage").SetValue(new Slider(20, 100, 20)));
-            animePussy.AddItem(new MenuItem("oL", "  Own HP Percentage").SetValue(new Slider(20, 100, 20)));
-            animePussy.AddItem(new MenuItem("UseHex", "Use Hextech Gunblade/Cutlass").SetValue(true));
-            animePussy.AddItem(new MenuItem("HL", "  Enemy HP Percentage").SetValue(new Slider(20, 100, 20)));
+            animePussy.AddItem(new MenuItem("eL", "  Enemy HP Percentage").SetValue(new Slider(80, 100, 0)));
+            animePussy.AddItem(new MenuItem("oL", "  Own HP Percentage").SetValue(new Slider(65, 100, 0)));
+            animePussy.AddItem(new MenuItem("UseHex", "Use Hextech Gunblade").SetValue(true));
+            animePussy.AddItem(new MenuItem("Hexhp", "  Enemy HP Percentage").SetValue(new Slider(80, 100, 0)));
+            animePussy.AddItem(new MenuItem("UseBilge", "Use Bilgewater Cutlass").SetValue(true));
+            animePussy.AddItem(new MenuItem("HLe", "  Enemy HP Percentage").SetValue(new Slider(80, 100, 0)));
 
 
 
@@ -111,7 +115,7 @@ namespace PewPewTristana
             Config.SubMenu("Drawing").AddItem(new MenuItem("Wdraw", "Draw W - Rocket Jump").SetValue(true));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Edraw", "Draw E - Explosive Charge").SetValue(true));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Rdraw", "Draw R - Bustershot").SetValue(true));
-            Config.SubMenu("Drawing").AddItem(new MenuItem("Rrdy", "Draw R Bustershot Status").SetValue(true));
+            Config.SubMenu("Drawing").AddItem(new MenuItem("Rrdy", "Draw R - Status").SetValue(true));
 
 
             Config.AddItem(new MenuItem("ARK SERIES", "Credits: ScienceARK, Salice, Lexxes, FluxySenpai"));
@@ -245,62 +249,80 @@ namespace PewPewTristana
 
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
             {
-                var et = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
-                var qt = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Physical);
-                var rt = TargetSelector.GetTarget(R.Range, TargetSelector.DamageType.Magical);
-                var wt = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
+
                 var ort = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
                 var Ignite = ObjectManager.Player.GetSpellSlot("summonerdot");
                 var dmg1 = player.GetComboDamage(ort, new[] { SpellSlot.E, SpellSlot.R });
-                var dmg2 = player.GetComboDamage(ort, new[] { SpellSlot.E, IgniteSlot });
-                var dmg3 = player.GetComboDamage(ort, new[] { SpellSlot.E, SpellSlot.R, SpellSlot.W, IgniteSlot });
                 var botrk = ItemData.Blade_of_the_Ruined_King.GetItem();
                 var hex = ItemData.Hextech_Gunblade.GetItem();
                 var cutlass = ItemData.Bilgewater_Cutlass.GetItem();
 
                 //BOTRK
-                if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort) && ort.HealthPercentage() < Config.Item("eL").GetValue<Slider>().Value
-                    && player.HealthPercentage() <  Config.Item("oL").GetValue<Slider>().Value && Config.Item("UseBOTRK").GetValue<bool>())
-                
-                    botrk.Cast(ort);
-
-                //HEXTECHGUNBLADE
-                if (hex.IsReady() && hex.IsOwned(player) && hex.IsInRange(ort) && ort.HealthPercentage() < Config.Item("HL").GetValue<Slider>().Value
-                && Config.Item("UseHEX").GetValue<bool>())
-
-                    hex.Cast(ort);
-
-                //BILGEWATER SWORD THINGY
-                if (cutlass.IsReady() && cutlass.IsOwned(player) && cutlass.IsInRange(ort) && ort.HealthPercentage() < Config.Item("HL").GetValue<Slider>().Value
-                && Config.Item("UseHEX").GetValue<bool>())
-
-                    cutlass.Cast(ort);
-
-                //WLOGIC I GUESS
-                if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) && ort.IsValidTarget(W.Range) &&
-                wt.Position.CountEnemiesInRange(700) < Config.Item("WL").GetValue<Slider>().Value && Config.Item("UseW").GetValue<bool>() && (CalcDamage(ort) + 150 > ort.Health))
-
-                    W.Cast(ort.Position);
-
-
-                if (E.IsReady() && Config.Item("UseE").GetValue<bool>() && et.IsValidTarget(E.Range))
-                    E.CastOnUnit(et);
                 {
-                    if (Q.IsReady() && Config.Item("UseQ").GetValue<bool>() && qt.IsValidTarget(Q.Range))
+                    if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort)
+                        && ort.HealthPercentage() <= Config.Item("eL").GetValue<Slider>().Value
+                        && Config.Item("UseBOTRK").GetValue<bool>())
+
+                        botrk.Cast(ort);
+                }
+                {
+
+                    if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort)
+                        && player.HealthPercentage() <= Config.Item("oL").GetValue<Slider>().Value
+                        && Config.Item("UseBOTRK").GetValue<bool>())
+
+                        botrk.Cast(ort);
+                }
+                {
+
+                    //HEXTECHGUNBLADE
+                    if (hex.IsReady() && hex.IsOwned(player) && hex.IsInRange(ort) &&
+                        ort.HealthPercentage() <= Config.Item("Hexhp").GetValue<Slider>().Value
+                        && Config.Item("UseHex").GetValue<bool>())
+
+                        hex.Cast(ort);
+                }
+                {
+
+                    //BILGEWATER SWORD THINGY
+                    if (cutlass.IsReady() && cutlass.IsOwned(player) && cutlass.IsInRange(ort) &&
+                        ort.HealthPercentage() <= Config.Item("HLe").GetValue<Slider>().Value
+                        && Config.Item("UseBilge").GetValue<bool>())
+
+                        cutlass.Cast(ort);
+                }
+                {
+
+                    //WLOGIC I GUESS
+                    if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
+                        ort.IsValidTarget(W.Range) &&
+                        ort.Position.CountEnemiesInRange(700) < Config.Item("WL").GetValue<Slider>().Value &&
+                        Config.Item("UseW").GetValue<bool>() && (CalcDamage(ort) + 150 > ort.Health)
+                        && player.HealthPercentage() > Config.Item("WzL").GetValue<Slider>().Value)
+
+                        W.Cast(ort.Position);
+                }
+                {
+
+
+                    if (E.IsReady() && Config.Item("UseE").GetValue<bool>() && ort.IsValidTarget(E.Range))
+                        E.CastOnUnit(ort);
+                }
+                {
+                    if (Q.IsReady() && Config.Item("UseQ").GetValue<bool>() && ort.IsValidTarget(Q.Range))
                         Q.CastOnUnit(ObjectManager.Player);
                 }
 
                 {
                     if (R.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
-                        Config.Item("UseR").GetValue<bool>() && (R.GetDamage(rt) > rt.Health - 50))
+                        Config.Item("UseR").GetValue<bool>() && (R.GetDamage(ort) > ort.Health - 50))
 
-                        R.CastOnUnit(rt);
+                        R.CastOnUnit(ort);
                 }
                 {
                    
 
-                    //Second Combo Mode WIP
-                    //Adding W kill soon
+                    
 
                     if (R.IsReady() && Config.Item("UseR").GetValue<bool>() &&
                         (Orbwalker.ActiveMode <= Orbwalking.OrbwalkingMode.Combo && (dmg1) > ort.Health))
@@ -310,7 +332,7 @@ namespace PewPewTristana
                 }
                 {
                     if (IgniteSlot.IsReady() && Config.Item("UseIgnite").GetValue<bool>() &&
-                        (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo && (CalcDamage(ort)) > ort.Health))
+                        (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo && (R.GetDamage(ort) > ort.Health)))
 
                         ObjectManager.Player.Spellbook.CastSpell(Ignite, ort);
                 }
