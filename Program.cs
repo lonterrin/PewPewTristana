@@ -84,7 +84,13 @@ namespace PewPewTristana
             animePussy.AddItem(new MenuItem("Blank", "                                         "));
             animePussy.AddItem(new MenuItem("UseW", "Use W  Logic - Rocket Jump").SetValue(true));
             //Wlogic
-            animePussy.AddItem(new MenuItem("WL", "Amount of Enemies").SetValue(new Slider(2, 5, 2)));
+            animePussy.AddItem(new MenuItem("WL", "  Amount of Enemies").SetValue(new Slider(1, 5, 1)));
+            animePussy.AddItem(new MenuItem("eBlank", "                                         "));
+            animePussy.AddItem(new MenuItem("UseBOTRK", "Use Blade of the Ruined King").SetValue(true));
+            animePussy.AddItem(new MenuItem("eL", "  Enemy HP Percentage").SetValue(new Slider(20, 100, 20)));
+            animePussy.AddItem(new MenuItem("oL", "  Own HP Percentage").SetValue(new Slider(20, 100, 20)));
+            animePussy.AddItem(new MenuItem("UseHex", "Use Hextech Gunblade/Cutlass").SetValue(true));
+            animePussy.AddItem(new MenuItem("HL", "  Enemy HP Percentage").SetValue(new Slider(20, 100, 20)));
 
 
 
@@ -97,23 +103,22 @@ namespace PewPewTristana
             Config.SubMenu("Misc").AddItem(new MenuItem("UseIgnite", "Use Ignite?").SetValue(true));
             Config.SubMenu("Misc").AddItem(new MenuItem("UsePackets", "Use Packets?").SetValue(true));
 
-            //Drawing Menu
-            //Damange Ind
+
             //Spell Ranges
             Config.SubMenu("Drawing").AddItem(new MenuItem("Draw_Disabled", "Disable All Spell Drawings").SetValue(false));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Wdraw", "Draw W - Rocket Jump").SetValue(true));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Edraw", "Draw E - Explosive Charge").SetValue(true));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Rdraw", "Draw R - Bustershot").SetValue(true));
+            Config.SubMenu("Drawing").AddItem(new MenuItem("Rrdy", "Draw R Bustershot Status").SetValue(true));
+
+
             Config.AddItem(new MenuItem("ARK SERIES", "Credits: ScienceARK, Salice, Lexxes, FluxySenpai"));
 
-            Config.SubMenu("Drawing").AddItem(new MenuItem("Blank", "                                         "));
-            Config.SubMenu("Drawing").AddItem(new MenuItem("Rrdy", "Draw R Bustershot Status").SetValue(true));
-            Config.SubMenu("Drawing").AddItem(new MenuItem("Killa", "Draw if Target is Killable").SetValue(true));
             //Damage Indc
             Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawD", "<<Draw Damage>>").SetValue(true));
-            Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawW", "Draw Rocket Jump Damage(W)").SetValue(false));
-            Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawE", "Draw Explosive Shot Damage(E)").SetValue(true));
-            Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawR", "Draw Bustershot Damage(R)").SetValue(true));
+            Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawW", "Draw Rocket Jump Damage (W)").SetValue(false));
+            Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawE", "Draw Explosive Shot Damage (E)").SetValue(true));
+            Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawR", "Draw Bustershot Damage (R)").SetValue(true));
 
 
             Config.AddToMainMenu();
@@ -281,7 +286,7 @@ namespace PewPewTristana
                 }
                 {
                     if (IgniteSlot.IsReady() && Config.Item("UseIgnite").GetValue<bool>() &&
-                        (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo && (dmg3) > ort.Health))
+                        (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo && (CalcDamage(ort)) > ort.Health))
 
                         ObjectManager.Player.Spellbook.CastSpell(Ignite, ort);
                 }
@@ -297,14 +302,6 @@ namespace PewPewTristana
             {
                 Drawing.DrawText(pos.X, pos.Y, Color.Gold, "R is Ready!");
             }
-            //Killable Drawing
-            var ort = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
-            var epos = Drawing.WorldToScreen(ort.Position);
-            if (CalcDamage(ort) + 150 > ort.Health && Config.Item("Killa").GetValue<bool>())
-            {
-                Drawing.DrawText(pos.X, pos.Y, Color.Red, "Target is Killable!");
-            }
-            //Drawings
 
             if (Config.Item("Draw_Disabled").GetValue<bool>())
                 return;
