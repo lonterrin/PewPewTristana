@@ -98,7 +98,6 @@ namespace PewPewTristana
             //Misc Options Menu
             Config.SubMenu("Misc").AddItem(new MenuItem("AntiGap", "Anti Gapcloser - R").SetValue(true));
             Config.SubMenu("Misc").AddItem(new MenuItem("Interrupt", "Interrupt Spells - R").SetValue(true));
-            Config.SubMenu("Misc").AddItem(new MenuItem("UseIgnite", "Use Ignite?").SetValue(true));
             Config.SubMenu("Misc").AddItem(new MenuItem("UsePackets", "Use Packets?").SetValue(true));
 
 
@@ -244,18 +243,6 @@ namespace PewPewTristana
                 var cutlass = ItemData.Bilgewater_Cutlass.GetItem();
                 var eort = ort as Obj_AI_Hero;
 
-                if (Config.Item("UseIgnite").GetValue<bool>())
-                {
-                    var Ignite = ObjectManager.Player.GetSpellSlot("summonerdot");
-
-                    if (ort != null && Ignite != SpellSlot.Unknown &&
-                        ObjectManager.Player.Spellbook.CanUseSpell(Ignite) == SpellState.Ready)
-                    {
-                        if (ObjectManager.Player.Distance(ort) < 650 &&
-                            ObjectManager.Player.GetSummonerSpellDamage(ort, Damage.SummonerSpell.Ignite) >=
-                            ort.Health)
-                        {
-                            ObjectManager.Player.Spellbook.CastSpell(Ignite, ort);
                             //BOTRK
                             {
                                 if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort)
@@ -311,9 +298,6 @@ namespace PewPewTristana
                                     R.CastOnUnit(ort, UsePackets());
                             }
                             {
-
-
-
 
                                 if (R.IsReady() && Config.Item("UseR").GetValue<bool>() &&
                                     (Orbwalker.ActiveMode <= Orbwalking.OrbwalkingMode.Combo &&
