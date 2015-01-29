@@ -237,9 +237,7 @@ namespace PewPewTristana
 
                 var ort = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
                 var dmg1 = player.GetComboDamage(ort, new[] {SpellSlot.E, SpellSlot.R});
-                var dmg2 = player.GetComboDamage(ort, new[] {SpellSlot.E,});
                 var botrk = ItemData.Blade_of_the_Ruined_King.GetItem();
-                var hex = ItemData.Hextech_Gunblade.GetItem();
                 var cutlass = ItemData.Bilgewater_Cutlass.GetItem();
                 var eort = ort as Obj_AI_Hero;
 
@@ -307,9 +305,9 @@ namespace PewPewTristana
                             }
                         }
                     }
-                }
-            }
-        }
+                
+            
+        
 
 
 
