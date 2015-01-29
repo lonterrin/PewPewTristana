@@ -237,88 +237,101 @@ namespace PewPewTristana
             {
 
                 var ort = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
-                var ignite = ObjectManager.Player.GetSpellSlot("summonerdot");
-                var dmg1 = player.GetComboDamage(ort, new[] { SpellSlot.E, SpellSlot.R });
+                var dmg1 = player.GetComboDamage(ort, new[] {SpellSlot.E, SpellSlot.R});
+                var dmg2 = player.GetComboDamage(ort, new[] {SpellSlot.E,});
                 var botrk = ItemData.Blade_of_the_Ruined_King.GetItem();
                 var hex = ItemData.Hextech_Gunblade.GetItem();
                 var cutlass = ItemData.Bilgewater_Cutlass.GetItem();
                 var eort = ort as Obj_AI_Hero;
-                //BOTRK
+
+                if (Config.Item("UseIgnite").GetValue<bool>())
                 {
-                    if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort)
-                        && ort.HealthPercentage() <= Config.Item("eL").GetValue<Slider>().Value
-                        && Config.Item("UseBOTRK").GetValue<bool>())
+                    var Ignite = ObjectManager.Player.GetSpellSlot("summonerdot");
 
-                        botrk.Cast(ort);
-                }
-                {
+                    if (ort != null && Ignite != SpellSlot.Unknown &&
+                        ObjectManager.Player.Spellbook.CanUseSpell(Ignite) == SpellState.Ready)
+                    {
+                        if (ObjectManager.Player.Distance(ort) < 650 &&
+                            ObjectManager.Player.GetSummonerSpellDamage(ort, Damage.SummonerSpell.Ignite) >=
+                            ort.Health)
+                        {
+                            ObjectManager.Player.Spellbook.CastSpell(Ignite, ort);
+                            //BOTRK
+                            {
+                                if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort)
+                                    && ort.HealthPercentage() <= Config.Item("eL").GetValue<Slider>().Value
+                                    && Config.Item("UseBOTRK").GetValue<bool>())
 
-                    if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort)
-                        && player.HealthPercentage() <= Config.Item("oL").GetValue<Slider>().Value
-                        && Config.Item("UseBOTRK").GetValue<bool>())
+                                    botrk.Cast(ort);
+                            }
+                            {
 
-                        botrk.Cast(ort);
-                }
-                {
+                                if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort)
+                                    && player.HealthPercentage() <= Config.Item("oL").GetValue<Slider>().Value
+                                    && Config.Item("UseBOTRK").GetValue<bool>())
 
-                    //BILGEWATER SWORD THINGY
-                    if (cutlass.IsReady() && cutlass.IsOwned(player) && cutlass.IsInRange(ort) &&
-                        ort.HealthPercentage() <= Config.Item("HLe").GetValue<Slider>().Value
-                        && Config.Item("UseBilge").GetValue<bool>())
+                                    botrk.Cast(ort);
+                            }
+                            {
 
-                        cutlass.Cast(ort);
-                }
-                {
+                                //BILGEWATER SWORD THINGY
+                                if (cutlass.IsReady() && cutlass.IsOwned(player) && cutlass.IsInRange(ort) &&
+                                    ort.HealthPercentage() <= Config.Item("HLe").GetValue<Slider>().Value
+                                    && Config.Item("UseBilge").GetValue<bool>())
 
-                    //WLOGIC I GUESS
-                    if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
-                        ort.IsValidTarget(W.Range) &&
-                        ort.Position.CountEnemiesInRange(700) <= Config.Item("WL").GetValue<Slider>().Value &&
-                        Config.Item("UseW").GetValue<bool>() && (CalcDamage(ort) + 150 > ort.Health)
-                        && player.HealthPercentage() >= Config.Item("WzL").GetValue<Slider>().Value)
+                                    cutlass.Cast(ort);
+                            }
+                            {
 
-                        W.Cast(ort.Position, UsePackets());
-                }
-                
-                {
+                                //WLOGIC I GUESS
+                                if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
+                                    ort.IsValidTarget(W.Range) &&
+                                    ort.Position.CountEnemiesInRange(700) <= Config.Item("WL").GetValue<Slider>().Value &&
+                                    Config.Item("UseW").GetValue<bool>() && (CalcDamage(ort) + 150 > ort.Health)
+                                    && player.HealthPercentage() >= Config.Item("WzL").GetValue<Slider>().Value)
+
+                                    W.Cast(ort.Position, UsePackets());
+                            }
+
+                            {
 
 
-                    if (E.IsReady() && Config.Item("UseE").GetValue<bool>() && ort.IsValidTarget(E.Range))
-                        E.CastOnUnit(ort, UsePackets());
-                }
-                {
-                    if (Q.IsReady() && Config.Item("UseQ").GetValue<bool>() && ort.IsValidTarget(Q.Range))
-                        Q.CastOnUnit(ObjectManager.Player);
-                }
+                                if (E.IsReady() && Config.Item("UseE").GetValue<bool>() && ort.IsValidTarget(E.Range))
+                                    E.CastOnUnit(ort, UsePackets());
+                            }
+                            {
+                                if (Q.IsReady() && Config.Item("UseQ").GetValue<bool>() && ort.IsValidTarget(Q.Range))
+                                    Q.CastOnUnit(ObjectManager.Player);
+                            }
 
-                {
-                    if (R.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
-                        Config.Item("UseR").GetValue<bool>() && (R.GetDamage(ort) > ort.Health - 50))
+                            {
+                                if (R.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
+                                    Config.Item("UseR").GetValue<bool>() && (R.GetDamage(ort) > ort.Health - 50))
 
-                        R.CastOnUnit(ort, UsePackets());
-                }
-                {
-                   
+                                    R.CastOnUnit(ort, UsePackets());
+                            }
+                            {
 
-                    
 
-                    if (R.IsReady() && Config.Item("UseR").GetValue<bool>() &&
-                        (Orbwalker.ActiveMode <= Orbwalking.OrbwalkingMode.Combo && eort.HasBuff("explosivechargedebuff", true) && (dmg1) > ort.Health))
 
-                        R.CastOnUnit(ort, UsePackets());
 
-                }
-                {
-                    if (IgniteSlot.IsReady() && Config.Item("UseIgnite").GetValue<bool>() &&
-                        (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo && (R.GetDamage(ort) > ort.Health)))
+                                if (R.IsReady() && Config.Item("UseR").GetValue<bool>() &&
+                                    (Orbwalker.ActiveMode <= Orbwalking.OrbwalkingMode.Combo &&
+                                     eort.HasBuff("explosivechargedebuff", true) && (dmg1) > ort.Health))
 
-                        ObjectManager.Player.Spellbook.CastSpell(ignite, ort);
+                                    R.CastOnUnit(ort, UsePackets());
+                            }
+                        }
+                    }
                 }
             }
         }
-        
 
-        private static void OnDraw(EventArgs args)
+
+
+
+        private static
+            void OnDraw(EventArgs args)
         {
             //Draw Skill Cooldown on Champ
             var pos = Drawing.WorldToScreen(ObjectManager.Player.Position);
