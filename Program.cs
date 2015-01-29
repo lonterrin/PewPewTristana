@@ -15,7 +15,7 @@ namespace PewPewTristana
         {
             //Welcome Message upon loading assembly.
             Game.PrintChat(
-                "<font color=\"#00BFFF\">PewPewTristana<font color=\"#FFFFFF\">Successfully Loaded.</font>");
+                "<font color=\"#00BFFF\">PewPewTristana -<font color=\"#FFFFFF\">Successfully Loaded.</font>");
             CustomEvents.Game.OnGameLoad += OnLoad;
         }
 
@@ -109,7 +109,7 @@ namespace PewPewTristana
             Config.SubMenu("Drawing").AddItem(new MenuItem("Rrdy", "Draw R - Status").SetValue(true));
 
 
-            Config.AddItem(new MenuItem("ARK SERIES", "Credits: ScienceARK, Salice, Lexxes, FluxySenpai"));
+            Config.AddItem(new MenuItem("ARK SERIES", "Credits: Salice, Lexxes, xSalice & Xcxooxl"));
 
             //Damage Indc
             Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawD", "<<Draw Damage>>").SetValue(true));
