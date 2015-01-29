@@ -15,19 +15,16 @@ namespace PewPewTristana
         {
             //Welcome Message upon loading assembly.
             Game.PrintChat(
-                "<font color=\"#00BFFF\">Tristana ARK - Droppin' Rockets <font color=\"#FFFFFF\">Successfully Loaded.</font>");
+                "<font color=\"#00BFFF\">PewPewTristana<font color=\"#FFFFFF\">Successfully Loaded.</font>");
             CustomEvents.Game.OnGameLoad += OnLoad;
         }
 
-        //AP Tristrana - Droppin' Rockets,
         //Champ Name, Dynamic Range settings, Orbwalker and stuff
         public const string ChampName = "Tristana";
         public static int SpellRangeTick;
         public static Menu Config;
         public static Orbwalking.Orbwalker Orbwalker;
 
-
-        private static float _eTime;
 
         //Specific Spells - Combos etc.
         //Can be used to create custom spells to use for example in seperate combos
@@ -42,7 +39,6 @@ namespace PewPewTristana
         private static Obj_AI_Hero player = ObjectManager.Player;
 
         public static SpellSlot IgniteSlot;
-        private static Items.Item Dfg;
 
         public static HpBarIndicator Hpi = new HpBarIndicator();
 
@@ -69,8 +65,6 @@ namespace PewPewTristana
             OneShot = new Spell(SpellSlot.R, 630);
 
             //Items
-            Dfg = new Items.Item(3128, 750);
-            Dfg = new Items.Item((int)ItemId.Deathfire_Grasp, 750);
 
             //Main Menu & Sub Menus
             Config = new Menu("PewPewTristana", "Tristark", true);
@@ -93,8 +87,6 @@ namespace PewPewTristana
             animePussy.AddItem(new MenuItem("UseBOTRK", "Use Blade of the Ruined King").SetValue(true));
             animePussy.AddItem(new MenuItem("eL", "  Enemy HP Percentage").SetValue(new Slider(80, 100, 0)));
             animePussy.AddItem(new MenuItem("oL", "  Own HP Percentage").SetValue(new Slider(65, 100, 0)));
-            animePussy.AddItem(new MenuItem("UseHex", "Use Hextech Gunblade").SetValue(true));
-            animePussy.AddItem(new MenuItem("Hexhp", "  Enemy HP Percentage").SetValue(new Slider(80, 100, 0)));
             animePussy.AddItem(new MenuItem("UseBilge", "Use Bilgewater Cutlass").SetValue(true));
             animePussy.AddItem(new MenuItem("HLe", "  Enemy HP Percentage").SetValue(new Slider(80, 100, 0)));
 
@@ -196,12 +188,6 @@ namespace PewPewTristana
             }
             return (int)damage;
         }
-        private static void CastE(Obj_AI_Base unit)
-        {
-            _eTime = 5 + Game.Time + player.Distance(unit) / E.Instance.SData.MissileSpeed;
-            E.CastOnUnit(unit, UsePackets());
-        }
-
 
         private static void TristSpellRanges()
         {
@@ -239,7 +225,7 @@ namespace PewPewTristana
                 //HARASS
                 var t = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
                 if (E.IsReady() && Config.Item("hE").GetValue<bool>() && t.IsValidTarget(E.Range))
-                    E.CastOnUnit(t);
+                    E.CastOnUnit(t, UsePackets());
                 {
                     if (Q.IsReady() && Config.Item("hQ").GetValue<bool>() && t.IsValidTarget(Q.Range))
                         Q.CastOnUnit(ObjectManager.Player);
@@ -251,12 +237,12 @@ namespace PewPewTristana
             {
 
                 var ort = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
-                var Ignite = ObjectManager.Player.GetSpellSlot("summonerdot");
+                var ignite = ObjectManager.Player.GetSpellSlot("summonerdot");
                 var dmg1 = player.GetComboDamage(ort, new[] { SpellSlot.E, SpellSlot.R });
                 var botrk = ItemData.Blade_of_the_Ruined_King.GetItem();
                 var hex = ItemData.Hextech_Gunblade.GetItem();
                 var cutlass = ItemData.Bilgewater_Cutlass.GetItem();
-
+                var eort = ort as Obj_AI_Hero;
                 //BOTRK
                 {
                     if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort)
@@ -275,15 +261,6 @@ namespace PewPewTristana
                 }
                 {
 
-                    //HEXTECHGUNBLADE
-                    if (hex.IsReady() && hex.IsOwned(player) && hex.IsInRange(ort) &&
-                        ort.HealthPercentage() <= Config.Item("Hexhp").GetValue<Slider>().Value
-                        && Config.Item("UseHex").GetValue<bool>())
-
-                        hex.Cast(ort);
-                }
-                {
-
                     //BILGEWATER SWORD THINGY
                     if (cutlass.IsReady() && cutlass.IsOwned(player) && cutlass.IsInRange(ort) &&
                         ort.HealthPercentage() <= Config.Item("HLe").GetValue<Slider>().Value
@@ -296,17 +273,18 @@ namespace PewPewTristana
                     //WLOGIC I GUESS
                     if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
                         ort.IsValidTarget(W.Range) &&
-                        ort.Position.CountEnemiesInRange(700) < Config.Item("WL").GetValue<Slider>().Value &&
+                        ort.Position.CountEnemiesInRange(700) <= Config.Item("WL").GetValue<Slider>().Value &&
                         Config.Item("UseW").GetValue<bool>() && (CalcDamage(ort) + 150 > ort.Health)
-                        && player.HealthPercentage() > Config.Item("WzL").GetValue<Slider>().Value)
+                        && player.HealthPercentage() >= Config.Item("WzL").GetValue<Slider>().Value)
 
-                        W.Cast(ort.Position);
+                        W.Cast(ort.Position, UsePackets());
                 }
+                
                 {
 
 
                     if (E.IsReady() && Config.Item("UseE").GetValue<bool>() && ort.IsValidTarget(E.Range))
-                        E.CastOnUnit(ort);
+                        E.CastOnUnit(ort, UsePackets());
                 }
                 {
                     if (Q.IsReady() && Config.Item("UseQ").GetValue<bool>() && ort.IsValidTarget(Q.Range))
@@ -317,7 +295,7 @@ namespace PewPewTristana
                     if (R.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
                         Config.Item("UseR").GetValue<bool>() && (R.GetDamage(ort) > ort.Health - 50))
 
-                        R.CastOnUnit(ort);
+                        R.CastOnUnit(ort, UsePackets());
                 }
                 {
                    
@@ -325,16 +303,16 @@ namespace PewPewTristana
                     
 
                     if (R.IsReady() && Config.Item("UseR").GetValue<bool>() &&
-                        (Orbwalker.ActiveMode <= Orbwalking.OrbwalkingMode.Combo && (dmg1) > ort.Health))
+                        (Orbwalker.ActiveMode <= Orbwalking.OrbwalkingMode.Combo && eort.HasBuff("explosivechargedebuff", true) && (dmg1) > ort.Health))
 
-                        R.CastOnUnit(ort);
+                        R.CastOnUnit(ort, UsePackets());
 
                 }
                 {
                     if (IgniteSlot.IsReady() && Config.Item("UseIgnite").GetValue<bool>() &&
                         (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo && (R.GetDamage(ort) > ort.Health)))
 
-                        ObjectManager.Player.Spellbook.CastSpell(Ignite, ort);
+                        ObjectManager.Player.Spellbook.CastSpell(ignite, ort);
                 }
             }
         }
