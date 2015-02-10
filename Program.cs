@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Dynamic;
 using System.Linq;
+using System.Net;
 using LeagueSharp.Common;
 using LeagueSharp;
-using LeagueSharp.Common.Data;
-using SharpDX.Direct3D;
 using Color = System.Drawing.Color;
 
 namespace PewPewTristana
@@ -15,7 +13,7 @@ namespace PewPewTristana
         {
             //Welcome Message upon loading assembly.
             Game.PrintChat(
-                "<font color=\"#00BFFF\">PewPewTristana -<font color=\"#FFFFFF\">Successfully Loaded.</font>");
+                "<font color=\"#00BFFF\">PewPewTristana -<font color=\"#FFFFFF\">Test Version Successfully Loaded.</font>");
             CustomEvents.Game.OnGameLoad += OnLoad;
         }
 
@@ -80,6 +78,7 @@ namespace PewPewTristana
             animePussy.AddItem(new MenuItem("UseR", "Use R Logic - Bustershot").SetValue(true));
             animePussy.AddItem(new MenuItem("Blank", "                                         "));
             animePussy.AddItem(new MenuItem("UseW", "Use W  Logic - Rocket Jump").SetValue(true));
+            animePussy.AddItem(new MenuItem("wturret", "Use Rocket Jump in Turret Range").SetValue(true));
             animePussy.AddItem(new MenuItem("WzL", "  Own HP Percentage").SetValue(new Slider(65, 100, 0)));
             //Wlogic
             animePussy.AddItem(new MenuItem("WL", "  Amount of Enemies").SetValue(new Slider(1, 5, 1)));
@@ -90,32 +89,37 @@ namespace PewPewTristana
             animePussy.AddItem(new MenuItem("UseBilge", "Use Bilgewater Cutlass").SetValue(true));
             animePussy.AddItem(new MenuItem("HLe", "  Enemy HP Percentage").SetValue(new Slider(80, 100, 0)));
 
+            //Laneclear
 
-
-            Config.SubMenu("Harass").AddItem(new MenuItem("hQ", "Use Q - Rapid Fire").SetValue(true));
-            Config.SubMenu("Harass").AddItem(new MenuItem("hE", "Use E - Explosive Charge").SetValue(true));
+            Config.SubMenu("Harass Settings").AddItem(new MenuItem("hQ", "Use Q - Rapid Fire").SetValue(true));
+            Config.SubMenu("Harass Settings").AddItem(new MenuItem("hE", "Use E - Explosive Charge").SetValue(true));
 
             //Misc Options Menu
             Config.SubMenu("Misc").AddItem(new MenuItem("AntiGap", "Anti Gapcloser - R").SetValue(true));
             Config.SubMenu("Misc").AddItem(new MenuItem("Interrupt", "Interrupt Spells - R").SetValue(true));
-            Config.SubMenu("Misc").AddItem(new MenuItem("UsePackets", "Use Packets?").SetValue(true));
+            Config.SubMenu("Misc").AddItem(new MenuItem("UsePackets", "Packets are DISBALED FOR NOW").SetValue(true));
 
 
             //Spell Ranges
-            Config.SubMenu("Drawing").AddItem(new MenuItem("Draw_Disabled", "Disable All Spell Drawings").SetValue(false));
+            Config.SubMenu("Drawing")
+                .AddItem(new MenuItem("Draw_Disabled", "Disable All Spell Drawings").SetValue(false));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Wdraw", "Draw W - Rocket Jump").SetValue(true));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Edraw", "Draw E - Explosive Charge").SetValue(true));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Rdraw", "Draw R - Bustershot").SetValue(true));
             Config.SubMenu("Drawing").AddItem(new MenuItem("Rrdy", "Draw R - Status").SetValue(true));
+            Config.SubMenu("Drawing")
+                .AddItem(new MenuItem("turretdraw", "Draw if target is in Turret Range").SetValue(true));
 
 
-            Config.AddItem(new MenuItem("ARK SERIES", "Credits: Salice, Lexxes, xSalice & Xcxooxl"));
 
             //Damage Indc
-            Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawD", "<<Draw Damage>>").SetValue(true));
-            Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawW", "Draw Rocket Jump Damage (W)").SetValue(false));
-            Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawE", "Draw Explosive Shot Damage (E)").SetValue(true));
-            Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawR", "Draw Bustershot Damage (R)").SetValue(true));
+            Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawD", "         <<Draw Damage>>").SetValue(true));
+            Config.SubMenu("Damage Indicator")
+                .AddItem(new MenuItem("DrawW", "Draw Rocket Jump Damage (W)").SetValue(false));
+            Config.SubMenu("Damage Indicator")
+                .AddItem(new MenuItem("DrawE", "Draw Explosive Shot Damage (E)").SetValue(true));
+            Config.SubMenu("Damage Indicator")
+                .AddItem(new MenuItem("DrawR", "Draw Bustershot Damage (R)").SetValue(true));
 
 
             Config.AddToMainMenu();
@@ -155,7 +159,7 @@ namespace PewPewTristana
             var damage = aa;
 
             if (IgniteSlot != SpellSlot.Unknown &&
-        player.Spellbook.CanUseSpell(IgniteSlot) == SpellState.Ready)
+                player.Spellbook.CanUseSpell(IgniteSlot) == SpellState.Ready)
                 damage += ObjectManager.Player.GetSummonerSpellDamage(target, Damage.SummonerSpell.Ignite);
 
             if (Items.HasItem(3146) && Items.CanUseItem(3146))
@@ -175,7 +179,7 @@ namespace PewPewTristana
                 }
             }
 
-            if (R.IsReady() && Config.Item("DrawR").GetValue<bool>() && Config.Item("UseR").GetValue<bool>())  // rdamage
+            if (R.IsReady() && Config.Item("DrawR").GetValue<bool>() && Config.Item("UseR").GetValue<bool>()) // rdamage
             {
 
                 damage += R.GetDamage(target);
@@ -185,7 +189,7 @@ namespace PewPewTristana
             {
                 damage += W.GetDamage(target);
             }
-            return (int)damage;
+            return (int) damage;
         }
 
         private static void TristSpellRanges()
@@ -196,9 +200,9 @@ namespace PewPewTristana
                     return;
                 SpellRangeTick = Environment.TickCount;
 
-                Q.Range = 600 + (4 * (ObjectManager.Player.Level - 1));
-                E.Range = 545 + (7 * (ObjectManager.Player.Level - 1));
-                R.Range = 545 + (7 * (ObjectManager.Player.Level - 1));
+                Q.Range = 600 + (4*(ObjectManager.Player.Level - 1));
+                E.Range = 550 + (7*(ObjectManager.Player.Level - 1));
+                R.Range = 550 + (7*(ObjectManager.Player.Level - 1));
             }
         }
 
@@ -219,136 +223,174 @@ namespace PewPewTristana
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
-            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed)
+            var eort = TargetSelector.GetTarget(1500, TargetSelector.DamageType.Magical);
+            var epos = Drawing.WorldToScreen(eort.Position);
+
+            if (Config.Item("turretdraw").GetValue<bool>() && eort.Position.UnderTurret(true))
             {
-                //HARASS
-                var t = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
-                if (E.IsReady() && Config.Item("hE").GetValue<bool>() && t.IsValidTarget(E.Range))
-                    E.CastOnUnit(t, UsePackets());
+                Drawing.DrawText(epos.X, epos.Y, Color.OrangeRed, "Enemy is in Turret Range");
                 {
-                    if (Q.IsReady() && Config.Item("hQ").GetValue<bool>() && t.IsValidTarget(Q.Range))
-                        Q.CastOnUnit(ObjectManager.Player);
+                    return;
                 }
 
             }
-
-            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
             {
+                if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed)
+                {
+                    //HARASS
+                    var t = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
+                    if (E.IsReady() && Config.Item("hE").GetValue<bool>() && t.IsValidTarget(E.Range))
+                        E.CastOnUnit(t);
+                    {
+                        if (Q.IsReady() && Config.Item("hQ").GetValue<bool>() && t.IsValidTarget(Q.Range))
+                            Q.CastOnUnit(ObjectManager.Player);
+                    }
 
-                var ort = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
-                var dmg1 = player.GetComboDamage(ort, new[] {SpellSlot.E, SpellSlot.R});
-                var botrk = ItemData.Blade_of_the_Ruined_King.GetItem();
-                var cutlass = ItemData.Bilgewater_Cutlass.GetItem();
-                var eort = ort as Obj_AI_Hero;
+                }
+                //COMBO
+                if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
+                {
+                    var nearest = TargetSelector.GetTarget(R.Range, TargetSelector.DamageType.Magical);
+                    var ort = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
+                    var pos = Drawing.WorldToScreen(ort.Position);
+                    var dmg1 = player.GetComboDamage(ort, new[] {SpellSlot.E, SpellSlot.R});
+                    var botrk = LeagueSharp.Common.Data.ItemData.Blade_of_the_Ruined_King.GetItem();
+                    var cutlass = LeagueSharp.Common.Data.ItemData.Bilgewater_Cutlass.GetItem();
 
-                            //BOTRK
+
+                    {
+                        if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort)
+                            && ort.HealthPercentage() <= Config.Item("eL").GetValue<Slider>().Value
+                            && Config.Item("UseBOTRK").GetValue<bool>())
+
+                            botrk.Cast(ort);
+                    }
+                    {
+
+                        if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort)
+                            && player.HealthPercentage() <= Config.Item("oL").GetValue<Slider>().Value
+                            && Config.Item("UseBOTRK").GetValue<bool>())
+
+                            botrk.Cast(ort);
+                    }
+                    {
+
+                        //BILGEWATER SWORD THINGY
+                        if (cutlass.IsReady() && cutlass.IsOwned(player) && cutlass.IsInRange(ort) &&
+                            ort.HealthPercentage() <= Config.Item("HLe").GetValue<Slider>().Value
+                            && Config.Item("UseBilge").GetValue<bool>())
+
+                            cutlass.Cast(ort);
+                    }
+                    {
+
+                        //WLOGIC I GUESS
+                        {
+                            if (ort.Position.UnderTurret(true) && Config.Item("wturret").GetValue<bool>())
                             {
-                                if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort)
-                                    && ort.HealthPercentage() <= Config.Item("eL").GetValue<Slider>().Value
-                                    && Config.Item("UseBOTRK").GetValue<bool>())
-
-                                    botrk.Cast(ort);
+                                return;
                             }
+
+
                             {
-
-                                if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort)
-                                    && player.HealthPercentage() <= Config.Item("oL").GetValue<Slider>().Value
-                                    && Config.Item("UseBOTRK").GetValue<bool>())
-
-                                    botrk.Cast(ort);
-                            }
-                            {
-
-                                //BILGEWATER SWORD THINGY
-                                if (cutlass.IsReady() && cutlass.IsOwned(player) && cutlass.IsInRange(ort) &&
-                                    ort.HealthPercentage() <= Config.Item("HLe").GetValue<Slider>().Value
-                                    && Config.Item("UseBilge").GetValue<bool>())
-
-                                    cutlass.Cast(ort);
-                            }
-                            {
-
-                                //WLOGIC I GUESS
                                 if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
                                     ort.IsValidTarget(W.Range) &&
-                                    ort.Position.CountEnemiesInRange(700) <= Config.Item("WL").GetValue<Slider>().Value &&
-                                    Config.Item("UseW").GetValue<bool>() && (CalcDamage(ort) + 150 > ort.Health)
-                                    && player.HealthPercentage() >= Config.Item("WzL").GetValue<Slider>().Value)
+                                    ort.Position.CountEnemiesInRange(700) <=
+                                    Config.Item("WL").GetValue<Slider>().Value &&
+                                    Config.Item("UseW").GetValue<bool>() &&
+                                    (CalcDamage(ort) + 150 > ort.Health)
+                                    &&
+                                    player.HealthPercentage() >= Config.Item("WzL").GetValue<Slider>().Value)
 
-                                    W.Cast(ort.Position, UsePackets());
+                                    W.Cast(ort.Position);
+
+
+
+
                             }
-
                             {
 
 
-                                if (E.IsReady() && Config.Item("UseE").GetValue<bool>() && ort.IsValidTarget(E.Range))
-                                    E.CastOnUnit(ort, UsePackets());
+                                if (E.IsReady() && Config.Item("UseE").GetValue<bool>() &&
+                                    ort.IsValidTarget(E.Range))
+                                    E.CastOnUnit(ort);
+
                             }
                             {
-                                if (Q.IsReady() && Config.Item("UseQ").GetValue<bool>() && ort.IsValidTarget(Q.Range))
+                                if (Q.IsReady() && Config.Item("UseQ").GetValue<bool>() &&
+                                    ort.IsValidTarget(Q.Range))
                                     Q.CastOnUnit(ObjectManager.Player);
                             }
 
                             {
                                 if (R.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
-                                    Config.Item("UseR").GetValue<bool>() && (R.GetDamage(ort) > ort.Health - 50))
+                                    Config.Item("UseR").GetValue<bool>() &&
+                                    (R.GetDamage(ort) > ort.Health - 50))
 
-                                    R.CastOnUnit(ort, UsePackets());
+                                    R.CastOnUnit(ort);
                             }
                             {
 
                                 if (R.IsReady() && Config.Item("UseR").GetValue<bool>() &&
                                     (Orbwalker.ActiveMode <= Orbwalking.OrbwalkingMode.Combo &&
-                                     eort.HasBuff("explosivechargedebuff", true) && (dmg1) > ort.Health))
+                                     eort.HasBuff("explosivecharge", true) && (dmg1) > ort.Health))
 
-                                    R.CastOnUnit(ort, UsePackets());
+                                    R.CastOnUnit(ort);
                             }
+                            {
+
+
+                            }
+
                         }
                     }
-                
-            
-        
-
-
-
-
-        private static
-            void OnDraw(EventArgs args)
-        {
-            //Draw Skill Cooldown on Champ
-            var pos = Drawing.WorldToScreen(ObjectManager.Player.Position);
-            if (R.IsReady() && Config.Item("Rrdy").GetValue<bool>())
-            {
-                Drawing.DrawText(pos.X, pos.Y, Color.Gold, "R is Ready!");
+                }
             }
-
-            if (Config.Item("Draw_Disabled").GetValue<bool>())
-                return;
-
-            foreach (var tar in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget(2000)))
-            {
-            }
-
-            if (Config.Item("Wdraw").GetValue<bool>())
-                if (W.Level > 0)
-                    Utility.DrawCircle(ObjectManager.Player.Position, W.Range, W.IsReady() ? Color.Gold : Color.Red);
-
-            if (Config.Item("Edraw").GetValue<bool>())
-                if (E.Level > 0)
-                    Utility.DrawCircle(ObjectManager.Player.Position, E.Range - 1, E.IsReady() ? Color.Blue : Color.Red);
-
-            if (Config.Item("Rdraw").GetValue<bool>())
-                if (R.Level > 0)
-                    Utility.DrawCircle(ObjectManager.Player.Position, R.Range - 2,
-                        R.IsReady() ? Color.MediumPurple : Color.Red);
         }
 
-        private static bool UsePackets()
-        {
-            return Config.Item("UsePackets").GetValue<bool>();
+
+
+
+
+
+
+            private static
+            void OnDraw 
+            (EventArgs
+            args)
+            {
+                //Draw Skill Cooldown on Champ
+                var pos = Drawing.WorldToScreen(ObjectManager.Player.Position);
+                if (R.IsReady() && Config.Item("Rrdy").GetValue<bool>())
+                {
+                    Drawing.DrawText(pos.X, pos.Y, Color.Gold, "R is Ready!");
+                }
+
+                if (Config.Item("Draw_Disabled").GetValue<bool>())
+                    return;
+
+                foreach (var tar in ObjectManager.Get<Obj_AI_Hero>().Where(enemy => enemy.IsValidTarget(2000)))
+                {
+                }
+
+                if (Config.Item("Wdraw").GetValue<bool>())
+                    if (W.Level > 0)
+                        Utility.DrawCircle(ObjectManager.Player.Position, W.Range, W.IsReady() ? Color.Gold : Color.Red);
+
+                if (Config.Item("Edraw").GetValue<bool>())
+                    if (E.Level > 0)
+                        Utility.DrawCircle(ObjectManager.Player.Position, E.Range - 1,
+                            E.IsReady() ? Color.Blue : Color.Red);
+
+                if (Config.Item("Rdraw").GetValue<bool>())
+                    if (R.Level > 0)
+                        Utility.DrawCircle(ObjectManager.Player.Position, R.Range - 2,
+                            R.IsReady() ? Color.MediumPurple : Color.Red);
+            }
         }
     }
-}
+
+
 
 
 
