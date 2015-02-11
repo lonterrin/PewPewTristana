@@ -79,7 +79,7 @@ namespace PewPewTristana
             animePussy.AddItem(new MenuItem("UseR", "Use R Logic - Bustershot").SetValue(true));
             animePussy.AddItem(new MenuItem("Blank", "                                         "));
             animePussy.AddItem(new MenuItem("UseW", "Use W  Logic - Rocket Jump").SetValue(true));
-            animePussy.AddItem(new MenuItem("wturret", "Use Rocket Jump if target is in turret range").SetValue(true));
+            animePussy.AddItem(new MenuItem("wturret", "Check if target is in turret range").SetValue(true));
             animePussy.AddItem(new MenuItem("WzL", "  Own HP Percentage").SetValue(new Slider(65, 100, 0)));
             //Wlogic
             animePussy.AddItem(new MenuItem("WL", "  Amount of Enemies").SetValue(new Slider(1, 5, 1)));
