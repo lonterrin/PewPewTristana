@@ -118,7 +118,7 @@ namespace PewPewTristana
             //Damage Indc
             Config.SubMenu("Damage Indicator").AddItem(new MenuItem("DrawD", "         <<Draw Damage>>").SetValue(true));
             Config.SubMenu("Damage Indicator")
-                .AddItem(new MenuItem("DrawW", "Draw Rocket Jump Damage (W)").SetValue(false));
+                .AddItem(new MenuItem("DrawW", "Draw Rocket Jump Damage (W)").SetValue(true));
             Config.SubMenu("Damage Indicator")
                 .AddItem(new MenuItem("DrawE", "Draw Explosive Shot Damage (E)").SetValue(true));
             Config.SubMenu("Damage Indicator")
