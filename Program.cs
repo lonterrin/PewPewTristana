@@ -77,6 +77,8 @@ namespace PewPewTristana
             animePussy.AddItem(new MenuItem("UseQ", "Use Q - Rapid Fire").SetValue(true));
             animePussy.AddItem(new MenuItem("UseE", "Use E - Explosive Charge").SetValue(true));
             animePussy.AddItem(new MenuItem("UseR", "Use R Logic - Bustershot").SetValue(true));
+            animePussy.AddItem(new MenuItem("rnear", "Cast R on your target"))
+                .SetValue(new KeyBind('R', KeyBindType.Press));
             animePussy.AddItem(new MenuItem("Blank", "                                         "));
             animePussy.AddItem(new MenuItem("UseW", "Use W  Logic - Rocket Jump").SetValue(true));
             animePussy.AddItem(new MenuItem("wturret", "Check if target is in turret range").SetValue(true));
@@ -243,7 +245,11 @@ namespace PewPewTristana
                 var dmg1 = player.GetComboDamage(ort, new[] {SpellSlot.E, SpellSlot.R});
                 var botrk = LeagueSharp.Common.Data.ItemData.Blade_of_the_Ruined_King.GetItem();
                 var cutlass = LeagueSharp.Common.Data.ItemData.Bilgewater_Cutlass.GetItem();
+                {
+                    if (Config.Item("rnear").GetValue<KeyBind>().Active && R.IsReady() && nearest.IsValidTarget(R.Range))
 
+                        R.CastOnUnit(nearest);
+                }
 
                 {
                     if (botrk.IsReady() && botrk.IsOwned(player) && botrk.IsInRange(ort)
