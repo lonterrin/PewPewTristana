@@ -169,7 +169,7 @@ namespace PewPewTristana
         {
             //Calculate Combo Damage
 
-            var aa = player.GetAutoAttackDamage(target, true);
+            var aa = player.GetAutoAttackDamage(target, true) * (1 + player.Crit);
             var damage = aa;
 
             if (IgniteSlot != SpellSlot.Unknown &&
@@ -360,7 +360,7 @@ namespace PewPewTristana
                             ort.Position.CountEnemiesInRange(700) <=
                             Config.Item("WL").GetValue<Slider>().Value &&
                             Config.Item("UseW").GetValue<bool>() &&
-                            (CalcDamage(ort) + 150 > ort.Health)
+                            (CalcDamage(ort) + 250 > ort.Health)
                             &&
                             player.HealthPercentage() >= Config.Item("WzL").GetValue<Slider>().Value)
 
