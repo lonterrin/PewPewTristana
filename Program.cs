@@ -91,7 +91,7 @@ namespace PewPewTristana
             animePussy.AddItem(new MenuItem("oL", "  Own HP Percentage").SetValue(new Slider(65, 100, 0)));
             animePussy.AddItem(new MenuItem("UseBilge", "Use Bilgewater Cutlass").SetValue(true));
             animePussy.AddItem(new MenuItem("HLe", "  Enemy HP Percentage").SetValue(new Slider(80, 100, 0)));
-            animePussy.AddItem(new MenuItem("UseGhostblade", "Use Youmoos Ghostblade").SetValue(true));
+            animePussy.AddItem(new MenuItem("useGhostblade", "Use Youmoos Ghostblade").SetValue(true));
             animePussy.AddItem(new MenuItem("Ghostblade", "  Enemy HP Percentage").SetValue(new Slider(80, 100, 0)));
 
             //Laneclear
