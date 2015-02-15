@@ -342,7 +342,7 @@ namespace PewPewTristana
 
                     if (R.IsReady() && Config.Item("UseR").GetValue<bool>() &&
                         (Orbwalker.ActiveMode <= Orbwalking.OrbwalkingMode.Combo &&
-                         eort.HasBuff("detonatingshot", true) && (dmg1) > ort.Health))
+                         eort.HasBuff("tristanaecharge", true) && (dmg1) > ort.Health))
 
                         R.CastOnUnit(ort);
                 }
