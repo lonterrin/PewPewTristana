@@ -358,6 +358,8 @@ namespace PewPewTristana
                         if (ort.IsDead)
 
                             return;
+                        {                            
+                        }
 
                             if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
                             ort.IsValidTarget(W.Range) &&
