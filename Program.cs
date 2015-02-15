@@ -91,6 +91,8 @@ namespace PewPewTristana
             animePussy.AddItem(new MenuItem("oL", "  Own HP Percentage").SetValue(new Slider(65, 100, 0)));
             animePussy.AddItem(new MenuItem("UseBilge", "Use Bilgewater Cutlass").SetValue(true));
             animePussy.AddItem(new MenuItem("HLe", "  Enemy HP Percentage").SetValue(new Slider(80, 100, 0)));
+            animePussy.AddItem(new MenuItem("UseGhostblade", "Use Youmoos Ghostblade").SetValue(true));
+            animePussy.AddItem(new MenuItem("Ghostblade", "  Enemy HP Percentage").SetValue(new Slider(80, 100, 0)));
 
             //Laneclear
 
@@ -275,6 +277,7 @@ namespace PewPewTristana
                 var pos = Drawing.WorldToScreen(ort.Position);
                 var dmg1 = player.GetComboDamage(ort, new[] {SpellSlot.E, SpellSlot.R});
                 var botrk = LeagueSharp.Common.Data.ItemData.Blade_of_the_Ruined_King.GetItem();
+                var Ghost = LeagueSharp.Common.Data.ItemData.Youmuus_Ghostblade.GetItem();
                 var cutlass = LeagueSharp.Common.Data.ItemData.Bilgewater_Cutlass.GetItem();
                 {
                     if (Config.Item("rnear").GetValue<KeyBind>().Active && R.IsReady() && nearest.IsValidTarget(R.Range))
@@ -307,6 +310,13 @@ namespace PewPewTristana
                         cutlass.Cast(ort);
                 }
                 {
+                    if (Ghost.IsReady() && Ghost.IsOwned(player) && ort.IsValidTarget(Q.Range)
+                    && ort.HealthPercentage() <= Config.Item("Ghostblade").GetValue<Slider>().Value
+                    && Config.Item("useGhostblade").GetValue<bool>())
+
+                        Ghost.Cast(ort);
+                    {                       
+                    }
 
 
 
