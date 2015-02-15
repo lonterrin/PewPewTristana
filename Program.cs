@@ -96,6 +96,15 @@ namespace PewPewTristana
 
             Config.SubMenu("Harass Settings").AddItem(new MenuItem("hQ", "Use Q - Rapid Fire").SetValue(true));
             Config.SubMenu("Harass Settings").AddItem(new MenuItem("hE", "Use E - Explosive Charge").SetValue(true));
+            Config.SubMenu("Harass Settings")
+            .AddItem(new MenuItem("harassmana", "Mana Percentage").SetValue(new Slider(30, 100, 0)));
+
+            Config.SubMenu("Laneclear Settings")
+            .AddItem(new MenuItem("laneW", "Use Q - Rapid Fire").SetValue(true));
+            Config.SubMenu("Laneclear Settings")
+                .AddItem(new MenuItem("laneE", "Use E - Explosive Charge").SetValue(true));
+            Config.SubMenu("Laneclear Settings")
+            .AddItem(new MenuItem("laneclearmana", "Mana Percentage").SetValue(new Slider(30, 100, 0)));
 
             //Misc Options Menu
             Config.SubMenu("Misc").AddItem(new MenuItem("AntiGap", "Anti Gapcloser - R").SetValue(true));
@@ -223,14 +232,36 @@ namespace PewPewTristana
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
+            var lanemana = Config.Item("laneclearmana").GetValue<Slider>().Value;
+            var harassmana = Config.Item("harassmana").GetValue<Slider>().Value;
+            var laneclear = (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear);
+            var allMinionsQ = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, W.Range + W.Width + 30);
+            var allMinionsE = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, E.Range + W.Width - 50);
+
+            var Qfarmpos = W.GetLineFarmLocation(allMinionsQ, W.Width);
+            var Efarmpos = W.GetCircularFarmLocation(allMinionsE, W.Width - 50);
+
+           
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear && Qfarmpos.MinionsHit >= 3 && allMinionsE.Count >= 1 && Config.Item("laneW").GetValue<bool>()
+                && player.ManaPercentage() >= lanemana)
+            {
+                Q.Cast(player);
+            }
+           foreach (var minion in allMinionsE)
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear &&  minion.IsValidTarget(E.Range) && Efarmpos.MinionsHit >= 2 && allMinionsE.Count >= 1 && Config.Item("laneE").GetValue<bool>()
+                && player.ManaPercentage() >= lanemana)
+            {
+                E.CastOnUnit(minion);
+            }
+
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed)
             {
                 //HARASS
                 var t = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
-                if (E.IsReady() && Config.Item("hE").GetValue<bool>() && t.IsValidTarget(E.Range))
+                if (E.IsReady() && Config.Item("hE").GetValue<bool>() && t.IsValidTarget(E.Range) && player.ManaPercentage() >= harassmana)
                     E.CastOnUnit(t);
                 {
-                    if (Q.IsReady() && Config.Item("hQ").GetValue<bool>() && t.IsValidTarget(Q.Range))
+                    if (Q.IsReady() && Config.Item("hQ").GetValue<bool>() && t.IsValidTarget(Q.Range) && player.ManaPercentage() >= harassmana)
                         Q.CastOnUnit(ObjectManager.Player);
                 }
 
