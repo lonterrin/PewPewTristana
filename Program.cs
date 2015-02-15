@@ -355,7 +355,11 @@ namespace PewPewTristana
 
 
                     {
-                        if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
+                        if (ort.IsDead)
+
+                            return;
+
+                            if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
                             ort.IsValidTarget(W.Range) &&
                             ort.Position.CountEnemiesInRange(700) <=
                             Config.Item("WL").GetValue<Slider>().Value &&
