@@ -348,35 +348,37 @@ namespace PewPewTristana
                 }
                 {
                     //WLOGIC
+                    var wort = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
 
-                    if (ort.IsInvulnerable)
+
+                    if (wort.Position.UnderTurret(true) && Config.Item("wturret").GetValue<bool>())
                     {
                         return;
                     }
 
-                    if (ort.Position.UnderTurret(true) && Config.Item("wturret").GetValue<bool>())
-                    {
-                        return;
-                    }
-
 
                     {
-                        if (ort.IsDead)
+                        if (wort.IsDead)
 
                             return;
-                        {                            
+                        {
+                            if (wort.IsInvulnerable)
+                            
+                                return;                           
+                            }
+                            {                            
                         }
 
                             if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
-                            ort.IsValidTarget(W.Range) &&
-                            ort.Position.CountEnemiesInRange(700) <=
+                            wort.IsValidTarget(W.Range) &&
+                            wort.Position.CountEnemiesInRange(700) <=
                             Config.Item("WL").GetValue<Slider>().Value &&
                             Config.Item("UseW").GetValue<bool>() &&
-                            (CalcDamage(ort) + 250 > ort.Health)
+                            (CalcDamage(ort) + 250 > wort.Health)
                             &&
                             player.HealthPercentage() >= Config.Item("WzL").GetValue<Slider>().Value)
 
-                             W.Cast(ort.Position);
+                             W.CastIfHitchanceEquals(wort, HitChance.Medium);
 
 
                     }
