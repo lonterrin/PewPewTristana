@@ -2,6 +2,7 @@
 using System.Dynamic;
 using System.Linq;
 using System.Net;
+using System.Runtime.Remoting.Messaging;
 using LeagueSharp.Common;
 using LeagueSharp;
 using Color = System.Drawing.Color;
@@ -356,20 +357,23 @@ namespace PewPewTristana
                         return;
                     }
 
-
-                    {
                         if (wort.IsDead)
 
                             return;
                         {
-                            if (wort.IsInvulnerable)
+                            if (wort.HasBuff("deathdefiedbuff"))
                             
-                                return;                           
-                            }
+                                return;
+                            {
+                                if (wort.HasBuff("KogMawIcathianSurprise",true))
+
+                                    return;
+
+                            }        
                             {                            
                         }
 
-                            if (W.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
+                            if (W.IsReady() && wort.IsHPBarRendered && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
                             wort.IsValidTarget(W.Range) &&
                             wort.Position.CountEnemiesInRange(700) <=
                             Config.Item("WL").GetValue<Slider>().Value &&
