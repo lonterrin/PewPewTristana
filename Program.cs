@@ -109,6 +109,13 @@ namespace PewPewTristana
             Config.SubMenu("Laneclear Settings")
             .AddItem(new MenuItem("laneclearmana", "Mana Percentage").SetValue(new Slider(30, 100, 0)));
 
+            Config.SubMenu("Jungleclear Settings")
+            .AddItem(new MenuItem("jungleQ", "Use Q - Rapid Fire").SetValue(true));
+            Config.SubMenu("Jungleclear Settings")
+                .AddItem(new MenuItem("jungleE", "Use E - Explosive Charge").SetValue(true));
+            Config.SubMenu("Jungleclear Settings")
+            .AddItem(new MenuItem("jungleclearmana", "Mana Percentage").SetValue(new Slider(30, 100, 0)));
+
             //Misc Options Menu
             Config.SubMenu("Misc").AddItem(new MenuItem("AntiGap", "Anti Gapcloser - R").SetValue(true));
             Config.SubMenu("Misc").AddItem(new MenuItem("Interrupt", "Interrupt Spells - R").SetValue(true));
@@ -204,6 +211,29 @@ namespace PewPewTristana
             return (int) damage;
         }
 
+        private static void Jungleclear()
+        {
+            var jlanemana = Config.Item("jungleclearmana").GetValue<Slider>().Value;
+            var MinionsQ = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, W.Range + W.Width + 30, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
+            var MinionsE = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, E.Range + W.Width - 50, MinionTypes.All, MinionTeam.Neutral, MinionOrderTypes.MaxHealth);
+
+            var Qfarmpos = W.GetLineFarmLocation(MinionsQ, W.Width + 100);
+            var Efarmpos = W.GetCircularFarmLocation(MinionsE, W.Width - + 100);
+
+
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear && Qfarmpos.MinionsHit >= 1 && MinionsE.Count >= 1 && Config.Item("jungleQ").GetValue<bool>()
+                && player.ManaPercentage() >= jlanemana)
+            {
+                Q.Cast(player);
+            }
+            foreach (var minion in MinionsE)
+                if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear && minion.IsValidTarget(E.Range) && Efarmpos.MinionsHit >= 1 &&  MinionsE.Count >= 1 && Config.Item("jungleE").GetValue<bool>()
+                    && player.ManaPercentage() >= jlanemana)
+                {
+                    E.CastOnUnit(minion);
+                }           
+        }
+
         private static void TristSpellRanges()
         {
             //Tristana Passive Calc - Credits: Lexxes
@@ -235,9 +265,11 @@ namespace PewPewTristana
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
+                Jungleclear();
+
             var lanemana = Config.Item("laneclearmana").GetValue<Slider>().Value;
             var harassmana = Config.Item("harassmana").GetValue<Slider>().Value;
-            var laneclear = (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear);
             var allMinionsQ = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, W.Range + W.Width + 30);
             var allMinionsE = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, E.Range + W.Width - 50);
 
