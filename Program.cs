@@ -57,7 +57,7 @@ namespace PewPewTristana
             E = new Spell(SpellSlot.E, 630);
             R = new Spell(SpellSlot.R, 630);
 
-            E.SetTargetted(0.25f, 2000f);
+            
 
 
             //OneShot Settings
@@ -212,8 +212,8 @@ namespace PewPewTristana
                 SpellRangeTick = Environment.TickCount;
 
                 Q.Range = 600 + (4*(ObjectManager.Player.Level - 1));
-                E.Range = 550 + (7*(ObjectManager.Player.Level - 1));
-                R.Range = 550 + (7*(ObjectManager.Player.Level - 1));
+                E.Range = 545 + (7*(ObjectManager.Player.Level - 1));
+                R.Range = 545 + (7*(ObjectManager.Player.Level - 1));
             }
         }
 
@@ -348,6 +348,12 @@ namespace PewPewTristana
                 }
                 {
                     //WLOGIC
+
+                    if (ort.IsInvulnerable)
+                    {
+                        return;
+                    }
+
                     if (ort.Position.UnderTurret(true) && Config.Item("wturret").GetValue<bool>())
                     {
                         return;
@@ -370,7 +376,7 @@ namespace PewPewTristana
                             &&
                             player.HealthPercentage() >= Config.Item("WzL").GetValue<Slider>().Value)
 
-                            W.Cast(ort.Position);
+                             W.Cast(ort.Position);
 
 
                     }
