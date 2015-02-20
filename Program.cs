@@ -367,7 +367,7 @@ namespace PewPewTristana
                 {
                     if (R.IsReady() && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
                         Config.Item("UseR").GetValue<bool>() &&
-                        (R.GetDamage(ort) > ort.Health - 50))
+                        (R.GetDamage(ort) > ort.Health - 25))
 
                         R.CastOnUnit(ort);
                 }
@@ -381,47 +381,51 @@ namespace PewPewTristana
                 }
                 {
                     //WLOGIC
-                    var wort = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
 
 
-                    if (wort.Position.UnderTurret(true) && Config.Item("wturret").GetValue<bool>())
+                    if (ort.Position.UnderTurret(true) && Config.Item("wturret").GetValue<bool>())
                     {
                         return;
                     }
 
-                        if (wort.IsDead)
+
+
+                    if (ort.HasBuff("deathdefiedbuff"))
+
+                        return;
+                    {
+                        if (ort.HasBuff("KogMawIcathianSurprise", true))
 
                             return;
-                        {
-                            if (wort.HasBuff("deathdefiedbuff"))
-                            
-                                return;
-                            {
-                                if (wort.HasBuff("KogMawIcathianSurprise",true))
-
-                                    return;
-
-                            }        
-                            {                            
-                        }
-
-                            if (W.IsReady() && wort.IsHPBarRendered && (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
-                            wort.IsValidTarget(W.Range) &&
-                            wort.Position.CountEnemiesInRange(700) <=
-                            Config.Item("WL").GetValue<Slider>().Value &&
-                            Config.Item("UseW").GetValue<bool>() &&
-                            (CalcDamage(ort) + 250 > wort.Health)
-                            &&
-                            player.HealthPercentage() >= Config.Item("WzL").GetValue<Slider>().Value)
-
-                             W.CastIfHitchanceEquals(wort, HitChance.Medium);
-
-
                     }
+
+                    if (ort.IsDead)
+
+                        return;
+                
+
+                                        if (W.IsReady() && ort.IsHPBarRendered &&
+                                                 (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo) &&
+                                                 ort.IsValidTarget(W.Range) &&
+                                                 ort.Position.CountEnemiesInRange(700) <=
+                                                 Config.Item("WL").GetValue<Slider>().Value &&
+                                                 Config.Item("UseW").GetValue<bool>() &&
+                                                 (CalcDamage(ort) + 250 > ort.Health)
+                                                 &&
+                                                 player.HealthPercentage() >=
+                                                 Config.Item("WzL").GetValue<Slider>().Value)
+
+                                                    W.CastIfHitchanceEquals(ort, HitChance.Medium);
+
+
+
+
+
+                            }
 
                 }
             }
-        }
+        
     
 
 
@@ -439,6 +443,7 @@ namespace PewPewTristana
             {
 
                 }
+
                 //Draw Skill Cooldown on Champ
                 var pos = Drawing.WorldToScreen(ObjectManager.Player.Position);
                 if (R.IsReady() && Config.Item("Rrdy").GetValue<bool>())
