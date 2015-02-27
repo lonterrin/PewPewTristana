@@ -460,9 +460,9 @@ namespace PewPewTristana
                     return;
                 SpellRangeTick = Environment.TickCount;
 
-                Q.Range = 600 + (8 * (ObjectManager.Player.Level - 1));
-                E.Range = 550 + (9 * (ObjectManager.Player.Level - 1));
-                R.Range = 550 + (9 * (ObjectManager.Player.Level - 1));
+                Q.Range = 600 + (7 * (ObjectManager.Player.Level - 1));
+                E.Range = 550 + (7 * (ObjectManager.Player.Level - 1));
+                R.Range = 550 + (7 * (ObjectManager.Player.Level - 1));
             }
         }
 
