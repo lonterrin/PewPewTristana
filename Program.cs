@@ -59,7 +59,7 @@ namespace PewPewTristana
 
             var combo = Config.AddSubMenu(new Menu("[PPT]: Combo Settings", "Combo Settings"));
             var harass = Config.AddSubMenu(new Menu("[PPT]: Harass Settings", "Harass Settings"));
-            var drawing = Config.AddSubMenu(new Menu("[PTT]: Draw Settings", "Draw"));
+            var drawing = Config.AddSubMenu(new Menu("[PPT]: Draw Settings", "Draw"));
 
             combo.SubMenu("[SBTW] ManaManager").AddItem(new MenuItem("wmana", "[W] Mana %").SetValue(new Slider(10, 100, 0)));
             combo.SubMenu("[SBTW] ManaManager").AddItem(new MenuItem("emana", "[E] Mana %").SetValue(new Slider(10, 100, 0)));
