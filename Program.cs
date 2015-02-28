@@ -285,11 +285,7 @@ namespace PewPewTristana
         private static void rlogic()
         {
             var rmana = Config.Item("rmana").GetValue<Slider>().Value;
-
             var target = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
-
-            int ecount = 0;
-
             var erdamage = E.GetDamage(target) + R.GetDamage(target);
 
             if (Config.Item("manualr").GetValue<KeyBind>().Active && R.IsReady())
