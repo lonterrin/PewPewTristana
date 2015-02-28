@@ -122,10 +122,10 @@ namespace PewPewTristana
                 .AddItem(new MenuItem("jungleclearmana", "Mana Percentage").SetValue(new Slider(30, 100, 0)));
 
             drawing.AddItem(new MenuItem("Draw_Disabled", "Disable All Spell Drawings").SetValue(false));
-            drawing.AddItem(new MenuItem("Qdraw", "Draw Q Range").SetValue(true));
-            drawing.AddItem(new MenuItem("Wdraw", "Draw W Range").SetValue(true));
-            drawing.AddItem(new MenuItem("Edraw", "Draw E Range").SetValue(true));
-            drawing.AddItem(new MenuItem("Rdraw", "Draw R Range").SetValue(true));
+            drawing.AddItem(new MenuItem("Qdraw", "Draw Q Range").SetValue(new Circle(true, Color.Orange)));
+            drawing.AddItem(new MenuItem("Wdraw", "Draw W Range").SetValue(new Circle(true, Color.DarkOrange)));
+            drawing.AddItem(new MenuItem("Edraw", "Draw E Range").SetValue(new Circle(true, Color.AntiqueWhite)));
+            drawing.AddItem(new MenuItem("Rdraw", "Draw R Range").SetValue(new Circle(true, Color.LawnGreen)));
 
             harass.AddItem(new MenuItem("harassQ", "Use Q").SetValue(true));
             harass.AddItem(new MenuItem("harassE", "Use E").SetValue(true));
@@ -463,24 +463,24 @@ namespace PewPewTristana
             if (Config.Item("Draw_Disabled").GetValue<bool>())
                 return;
 
-            if (Config.Item("Qdraw").GetValue<bool>())
+            if (Config.Item("Qdraw").GetValue<Circle>().Active)
                 if (Q.Level > 0)
-                    Render.Circle.DrawCircle(ObjectManager.Player.Position, Q.Range, Q.IsReady() ? Color.Orange : Color.Red);
+                    Render.Circle.DrawCircle(ObjectManager.Player.Position, Q.Range, Q.IsReady() ? Config.Item("Qdraw").GetValue<Circle>().Color : Color.Red);
 
 
-            if (Config.Item("Wdraw").GetValue<bool>())
+            if (Config.Item("Wdraw").GetValue<Circle>().Active)
                 if (W.Level > 0)
-                    Render.Circle.DrawCircle(ObjectManager.Player.Position, W.Range, W.IsReady() ? Color.Gold : Color.Red);
+                    Render.Circle.DrawCircle(ObjectManager.Player.Position, W.Range, W.IsReady() ? Config.Item("Wdraw").GetValue<Circle>().Color : Color.Red);
 
-            if (Config.Item("Edraw").GetValue<bool>())
+            if (Config.Item("Edraw").GetValue<Circle>().Active)
                 if (E.Level > 0)
                     Render.Circle.DrawCircle(ObjectManager.Player.Position, E.Range - 1,
-                        E.IsReady() ? Color.AntiqueWhite : Color.Red);
+                        E.IsReady() ? Config.Item("Edraw").GetValue<Circle>().Color : Color.Red);
 
-            if (Config.Item("Rdraw").GetValue<bool>())
+            if (Config.Item("Rdraw").GetValue<Circle>().Active)
                 if (R.Level > 0)
                     Render.Circle.DrawCircle(ObjectManager.Player.Position, R.Range - 2,
-                        R.IsReady() ? Color.Gray : Color.Red);
+                        R.IsReady() ? Config.Item("Rdraw").GetValue<Circle>().Color : Color.Red);
 
             var orbtarget = Orbwalker.GetTarget();
             Render.Circle.DrawCircle(orbtarget.Position, 100, Color.DarkOrange, 10);
