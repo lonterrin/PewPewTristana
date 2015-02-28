@@ -68,17 +68,17 @@ namespace PewPewTristana
             combo.SubMenu("[Q] Settings").AddItem(new MenuItem("UseQ", "Use Q").SetValue(true));
             combo.SubMenu("[W] Settings").AddItem(new MenuItem("UseW", "Use Rocket Jump").SetValue(true));
             combo.SubMenu("[W] Settings")
-                .AddItem(new MenuItem("wnear", "Enemy Count").SetValue(new Slider(1, 5, 1)));
-            combo.SubMenu("[W] Settings").AddItem(new MenuItem("whp", "Own HP %").SetValue(new Slider(65, 100, 0)));
+                .AddItem(new MenuItem("wnear", "Enemy Count").SetValue(new Slider(2, 5, 1)));
+            combo.SubMenu("[W] Settings").AddItem(new MenuItem("whp", "Own HP %").SetValue(new Slider(75, 100, 0)));
             combo.SubMenu("[W] Settings")
                 .AddItem(new MenuItem("wturret", "Don't jump into turret range").SetValue(true));
 
             combo.SubMenu("[E] Settings").AddItem(new MenuItem("UseE", "Use Explosive Charge").SetValue(true));
             combo.SubMenu("[E] Settings")
-                .AddItem(new MenuItem("UseEW", "Use W on E stack count [WIP! DOESNT WORK]").SetValue(false));
+                .AddItem(new MenuItem("UseEW", "Use W on E stack count").SetValue(false));
+            combo.SubMenu("[E] Settings").AddItem(new MenuItem("estack", "E stack count").SetValue(new Slider(3, 4, 1)));
             combo.SubMenu("[E] Settings")
-            .AddItem(new MenuItem("enear", "Enemy Count").SetValue(new Slider(1, 5, 1)));
-            combo.SubMenu("[E] Settings").AddItem(new MenuItem("estack", "E stack count").SetValue(new Slider(4, 4, 1)));
+            .AddItem(new MenuItem("enear", "Enemy Count").SetValue(new Slider(2, 5, 1)));
             combo.SubMenu("[E] Settings").AddItem(new MenuItem("ehp", "Enemy HP %").SetValue(new Slider(45, 100, 0)));
             combo.SubMenu("[E] Settings").AddItem(new MenuItem("ohp", "Own HP %").SetValue(new Slider(65, 100, 0)));
 
@@ -242,6 +242,15 @@ namespace PewPewTristana
             if (target.HasBuff("KogMawIcathianSurprise", true))
                         return;
 
+            if (target.Buffs.Find(buff => buff.Name == "tristanaecharge").Count >= Config.Item("estack").GetValue<Slider>().Value
+                && Config.Item("UseEW").GetValue<bool>()
+                && target.Position.CountEnemiesInRange(700) <= Config.Item("enear").GetValue<Slider>().Value
+                && target.HealthPercentage() <= Config.Item("ehp").GetValue<Slider>().Value
+                && player.HealthPercentage() >= Config.Item("ohp").GetValue<Slider>().Value
+                && player.ManaPercentage() >= wmana)
+
+                W.Cast(target);
+
             if (W.IsReady() && target.IsValidTarget(W.Range)
                 && target.Position.CountEnemiesInRange(700) <= Config.Item("wnear").GetValue<Slider>().Value
                 && player.HealthPercentage() >= Config.Item("whp").GetValue<Slider>().Value
@@ -257,53 +266,35 @@ namespace PewPewTristana
                 Q.Cast(player);
         }
 
+        public static int Estackcount(Obj_AI_Base target)
+        {
+            var buff = target.Buffs.Find(Buffer => Buffer.Name == "tristanaecharge");
+            return buff != null ? buff.Count : 0;
+        }
+
         private static void elogic()
         {
-
             var target = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Physical);
-
             var wmana = Config.Item("wmana").GetValue<Slider>().Value;
             var emana = Config.Item("emana").GetValue<Slider>().Value;
-
-
-            if (E.IsReady() && Config.Item("UseE").GetValue<bool>()
-                && player.ManaPercentage() >= emana)
-                E.CastOnUnit(target);
-
-
 
             if (Config.Item("wturret").GetValue<bool>() && target.Position.UnderTurret(true))
                 return;
 
+            if (E.IsReady() && Config.Item("UseE").GetValue<bool>()
+            && player.ManaPercentage() >= emana)
 
-            foreach (var buff in target.Buffs)
-            {
-                if (buff.Name == "tristanaecharge" && buff.Count >= Config.Item("estack").GetValue<Slider>().Value)
-                {
-                    if (Config.Item("UseEW").GetValue<bool>()
-                        && target.Position.CountEnemiesInRange(700) <= Config.Item("enear").GetValue<Slider>().Value
-                        && target.HealthPercentage() <= Config.Item("ehp").GetValue<Slider>().Value
-                        && player.HealthPercentage() >= Config.Item("ohp").GetValue<Slider>().Value
-                        && player.ManaPercentage() >= wmana)
+                E.CastOnUnit(target);
 
-                        W.Cast(target);
-
-
-                }
-            }
-        }
-
-
-        private static
-            void rlogic()
+        }  
+          
+        private static void rlogic()
         {
             var rmana = Config.Item("rmana").GetValue<Slider>().Value;
 
             var target = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
 
             int ecount = 0;
-            if (target.HasBuff("tristanaecharge", true))
-                ecount = target.Buffs.Find(buff => buff.Name == "tristanaecharge").Count;
 
             var erdamage = E.GetDamage(target) + R.GetDamage(target);
 
@@ -483,8 +474,8 @@ namespace PewPewTristana
                 return;
 
             if (Config.Item("Qdraw").GetValue<bool>())
-                if (W.Level > 0)
-                    Render.Circle.DrawCircle(ObjectManager.Player.Position, Q.Range, Q.IsReady() ? Color.SkyBlue : Color.Red);
+                if (Q.Level > 0)
+                    Render.Circle.DrawCircle(ObjectManager.Player.Position, Q.Range, Q.IsReady() ? Color.Orange : Color.Red);
 
 
             if (Config.Item("Wdraw").GetValue<bool>())
@@ -494,12 +485,12 @@ namespace PewPewTristana
             if (Config.Item("Edraw").GetValue<bool>())
                 if (E.Level > 0)
                     Render.Circle.DrawCircle(ObjectManager.Player.Position, E.Range - 1,
-                        E.IsReady() ? Color.Blue : Color.Red);
+                        E.IsReady() ? Color.AntiqueWhite : Color.Red);
 
             if (Config.Item("Rdraw").GetValue<bool>())
                 if (R.Level > 0)
                     Render.Circle.DrawCircle(ObjectManager.Player.Position, R.Range - 2,
-                        R.IsReady() ? Color.MediumPurple : Color.Red);
+                        R.IsReady() ? Color.Gray : Color.Red);
 
             var orbtarget = Orbwalker.GetTarget();
             Render.Circle.DrawCircle(orbtarget.Position, 100, Color.DarkOrange, 10);
