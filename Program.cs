@@ -266,12 +266,6 @@ namespace PewPewTristana
                 Q.Cast(player);
         }
 
-        public static int Estackcount(Obj_AI_Base target)
-        {
-            var buff = target.Buffs.Find(Buffer => Buffer.Name == "tristanaecharge");
-            return buff != null ? buff.Count : 0;
-        }
-
         private static void elogic()
         {
             var target = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Physical);
