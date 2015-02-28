@@ -182,6 +182,18 @@ namespace PewPewTristana
             if (E.IsReady() && target.IsValidTarget(E.Range))
                 elogic();
 
+
+            var wmana = Config.Item("wmana").GetValue<Slider>().Value;
+
+            if (W.IsReady() && target.IsValidTarget(W.Range)
+            && Config.Item("UseW").GetValue<bool>()
+            && target.Position.CountEnemiesInRange(700) <= Config.Item("wnear").GetValue<Slider>().Value
+            && player.HealthPercentage() >= Config.Item("whp").GetValue<Slider>().Value
+            && CalcDamage(target) >= target.Health - 100
+            && player.ManaPercentage() >= wmana)
+
+                W.Cast(target.Position);
+
             if (W.IsReady() && target.IsValidTarget(W.Range))
                 wlogic();
 
@@ -247,15 +259,6 @@ namespace PewPewTristana
                 && target.Position.CountEnemiesInRange(700) <= Config.Item("enear").GetValue<Slider>().Value
                 && target.HealthPercentage() <= Config.Item("ehp").GetValue<Slider>().Value
                 && player.HealthPercentage() >= Config.Item("ohp").GetValue<Slider>().Value
-                && player.ManaPercentage() >= wmana)
-
-                W.Cast(target);
-
-            if (W.IsReady() && target.IsValidTarget(W.Range)
-                && Config.Item("UseW").GetValue<bool>()
-                && target.Position.CountEnemiesInRange(700) <= Config.Item("wnear").GetValue<Slider>().Value
-                && player.HealthPercentage() >= Config.Item("whp").GetValue<Slider>().Value
-                && CalcDamage(target) >= target.Health - 100
                 && player.ManaPercentage() >= wmana)
 
                 W.Cast(target);
