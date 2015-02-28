@@ -176,16 +176,16 @@ namespace PewPewTristana
         {
             var target = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Physical);
 
-            if (target.IsDead)
-                return;
-
-            if (Q.IsReady())
+            if (Q.IsReady() && target.IsValidTarget(Q.Range))
                 qlogic();
-            if (E.IsReady())
+
+            if (E.IsReady() && target.IsValidTarget(E.Range))
                 elogic();
-            if (W.IsReady())
+
+            if (W.IsReady() && target.IsValidTarget(W.Range))
                 wlogic();
-            if (R.IsReady())
+
+            if (R.IsReady() && target.IsValidTarget(R.Range))
                 rlogic();
 
             if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
@@ -252,9 +252,10 @@ namespace PewPewTristana
                 W.Cast(target);
 
             if (W.IsReady() && target.IsValidTarget(W.Range)
+                && Config.Item("UseW").GetValue<bool>()
                 && target.Position.CountEnemiesInRange(700) <= Config.Item("wnear").GetValue<Slider>().Value
                 && player.HealthPercentage() >= Config.Item("whp").GetValue<Slider>().Value
-                && CalcDamage(target) >= target.Health - 15 * player.Level
+                && CalcDamage(target) >= target.Health - 100
                 && player.ManaPercentage() >= wmana)
 
                 W.Cast(target);
