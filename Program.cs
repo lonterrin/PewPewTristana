@@ -204,6 +204,8 @@ namespace PewPewTristana
                 return;
             if (target.HasBuff("KogMawIcathianSurprise", true))
                 return;
+            if (target.IsInvulnerable)
+                return;
 
     
             if (W.IsReady() && target.IsValidTarget(W.Range)
@@ -265,6 +267,8 @@ namespace PewPewTristana
                         return;
             if (target.HasBuff("KogMawIcathianSurprise", true))
                         return;
+            if (target.IsInvulnerable)
+                return;
 
             if (target.Buffs.Find(buff => buff.Name == "tristanaecharge").Count >= Config.Item("estack").GetValue<Slider>().Value
                 && Config.Item("UseEW").GetValue<bool>()
