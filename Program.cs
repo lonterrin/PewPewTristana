@@ -179,12 +179,33 @@ namespace PewPewTristana
             if (Q.IsReady() && target.IsValidTarget(Q.Range))
                 qlogic();
 
-            if (E.IsReady() && target.IsValidTarget(E.Range))
-                elogic();
+            var emana = Config.Item("emana").GetValue<Slider>().Value;
+
+            if (E.IsReady() && Config.Item("UseE").GetValue<bool>()
+            && player.ManaPercentage() >= emana)
+
+                E.CastOnUnit(target);
 
 
             var wmana = Config.Item("wmana").GetValue<Slider>().Value;
 
+            if (W.IsReady() && target.IsValidTarget(W.Range) && target.HasBuff("tristanaecharge"))
+                wlogic();
+
+            if (R.IsReady() && target.IsValidTarget(R.Range))
+                rlogic();
+
+            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
+                items();
+
+            if (Config.Item("wturret").GetValue<bool>() && target.Position.UnderTurret(true))
+                return;
+            if (target.HasBuff("deathdefiedbuff"))
+                return;
+            if (target.HasBuff("KogMawIcathianSurprise", true))
+                return;
+
+    
             if (W.IsReady() && target.IsValidTarget(W.Range)
             && Config.Item("UseW").GetValue<bool>()
             && target.Position.CountEnemiesInRange(700) <= Config.Item("wnear").GetValue<Slider>().Value
@@ -193,15 +214,6 @@ namespace PewPewTristana
             && player.ManaPercentage() >= wmana)
 
                 W.Cast(target.Position);
-
-            if (W.IsReady() && target.IsValidTarget(W.Range))
-                wlogic();
-
-            if (R.IsReady() && target.IsValidTarget(R.Range))
-                rlogic();
-
-            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
-                items();
         }
         private static int CalcDamage(Obj_AI_Base target)
         {
@@ -263,6 +275,7 @@ namespace PewPewTristana
 
                 W.Cast(target);
         }
+
         private static void qlogic()
         {
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Physical);
@@ -270,22 +283,9 @@ namespace PewPewTristana
                 Q.Cast(player);
         }
 
-        private static void elogic()
-        {
-            var target = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Physical);
-            var wmana = Config.Item("wmana").GetValue<Slider>().Value;
-            var emana = Config.Item("emana").GetValue<Slider>().Value;
 
-            if (Config.Item("wturret").GetValue<bool>() && target.Position.UnderTurret(true))
-                return;
 
-            if (E.IsReady() && Config.Item("UseE").GetValue<bool>()
-            && player.ManaPercentage() >= emana)
 
-                E.CastOnUnit(target);
-
-        }  
-          
         private static void rlogic()
         {
             var rmana = Config.Item("rmana").GetValue<Slider>().Value;
