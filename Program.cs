@@ -139,7 +139,7 @@ namespace PewPewTristana
 
             Drawing.OnDraw += OnDraw;
             TristSpellRanges();
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnGameUpdate;
             Drawing.OnEndScene += OnEndScene;
             Interrupter.OnPossibleToInterrupt += Interrupter_OnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapCloser_OnEnemyGapcloser;

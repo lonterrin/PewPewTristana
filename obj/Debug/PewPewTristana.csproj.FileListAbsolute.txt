@@ -7,5 +7,6 @@ C:\Users\HAF911\Documents\Visual Studio 2013\Projects\PewPewTristana\PewPewTrist
 C:\Users\HAF911\Documents\Visual Studio 2013\Projects\PewPewTristana\PewPewTristana\bin\Release\SharpDX.dll
 C:\Users\HAF911\Documents\Visual Studio 2013\Projects\PewPewTristana\PewPewTristana\bin\Release\clipper_library.dll
 C:\Users\HAF911\Documents\Visual Studio 2013\Projects\PewPewTristana\PewPewTristana\bin\Release\LeagueSharp.xml
+C:\Users\HAF911\Documents\Visual Studio 2013\Projects\PewPewTristana\PewPewTristana\obj\Debug\PewPewTristana.csprojResolveAssemblyReference.cache
 C:\Users\HAF911\Documents\Visual Studio 2013\Projects\PewPewTristana\PewPewTristana\obj\Debug\PewPewTristana.exe
 C:\Users\HAF911\Documents\Visual Studio 2013\Projects\PewPewTristana\PewPewTristana\obj\Debug\PewPewTristana.pdb
