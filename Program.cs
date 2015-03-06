@@ -28,9 +28,6 @@ namespace PewPewTristana
 
         private static void Main(string[] args)
         {
-            //Welcome Message upon loading assembly.
-            Game.PrintChat(
-                "<font color=\"#00BFFF\">PewPewTristana -<font color=\"#FFFFFF\"> #TEST Version Successfully Loaded.</font>");
             CustomEvents.Game.OnGameLoad += OnLoad;
 
         }
@@ -39,6 +36,8 @@ namespace PewPewTristana
         {
             if (player.ChampionName != ChampName)
                 return;
+
+            Notifications.AddNotification("PewPewTristana - [V.3.1.1.1]", 8000);
 
             //Ability Information - Range - Variables.
             Q = new Spell(SpellSlot.Q);
@@ -139,7 +138,7 @@ namespace PewPewTristana
 
             Drawing.OnDraw += OnDraw;
             TristSpellRanges();
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnGameUpdate;
             Drawing.OnEndScene += OnEndScene;
             Interrupter.OnPossibleToInterrupt += Interrupter_OnPossibleToInterrupt;
             AntiGapcloser.OnEnemyGapcloser += AntiGapCloser_OnEnemyGapcloser;
@@ -175,6 +174,8 @@ namespace PewPewTristana
         private static void combo()
         {
             var target = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Physical);
+            if (target == null || !target.IsValidTarget())
+                return;
 
             if (Q.IsReady() && target.IsValidTarget(Q.Range))
                 qlogic();
@@ -260,6 +261,8 @@ namespace PewPewTristana
             var wmana = Config.Item("wmana").GetValue<Slider>().Value;
 
             var target = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Physical);
+            if (target == null || !target.IsValidTarget())
+                return;
 
             if (Config.Item("wturret").GetValue<bool>() && target.Position.UnderTurret(true))
                 return;
@@ -295,6 +298,8 @@ namespace PewPewTristana
             var rmana = Config.Item("rmana").GetValue<Slider>().Value;
             var target = TargetSelector.GetTarget(W.Range, TargetSelector.DamageType.Magical);
             var erdamage = E.GetDamage(target) + R.GetDamage(target);
+            if (target == null || !target.IsValidTarget())
+                return;
 
             if (Config.Item("manualr").GetValue<KeyBind>().Active && R.IsReady())
                 R.CastOnUnit(target);
@@ -323,6 +328,8 @@ namespace PewPewTristana
         {
             Ignite = player.GetSpellSlot("summonerdot");
             var target = TargetSelector.GetTarget(Q.Range, TargetSelector.DamageType.Physical);
+            if (target == null || !target.IsValidTarget())
+                return;
 
             var botrk = ItemData.Blade_of_the_Ruined_King.GetItem();
             var Ghost = ItemData.Youmuus_Ghostblade.GetItem();
@@ -357,20 +364,27 @@ namespace PewPewTristana
         }
         private static void Game_OnGameUpdate(EventArgs args)
         {
-            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
-                combo();
-            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
-                Laneclear();
-            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.LaneClear)
-                Jungleclear();
-            if (Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Mixed)
-                harass();
+            switch (Orbwalker.ActiveMode)
+            {
+                case Orbwalking.OrbwalkingMode.Combo:
+                    combo();
+                    break;
+                case Orbwalking.OrbwalkingMode.Mixed:
+                    harass();
+                    break;
+                case Orbwalking.OrbwalkingMode.LaneClear:
+                    Laneclear();
+                    Jungleclear();
+                    break;
+            }
         }
 
         private static void harass()
         {
             var harassmana = Config.Item("harassmana").GetValue<Slider>().Value;
             var target = TargetSelector.GetTarget(E.Range, TargetSelector.DamageType.Magical);
+            if (target == null || !target.IsValidTarget())
+                return;
 
             if (E.IsReady()
                 && Config.Item("hE").GetValue<bool>()
@@ -390,7 +404,6 @@ namespace PewPewTristana
         private static void Laneclear()
         {
             var lanemana = Config.Item("laneclearmana").GetValue<Slider>().Value;
-            var harassmana = Config.Item("harassmana").GetValue<Slider>().Value;
             var allMinionsQ = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, W.Range + W.Width + 30);
             var allMinionsE = MinionManager.GetMinions(ObjectManager.Player.ServerPosition, E.Range + W.Width - 50);
 
