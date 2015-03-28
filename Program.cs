@@ -28,7 +28,6 @@ namespace PewPewTristana
         private static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += OnLoad;
-
         }
 
         private static void OnLoad(EventArgs args)
